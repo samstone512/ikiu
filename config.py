@@ -10,13 +10,13 @@ from pathlib import Path
 
 # The base URL of the university's regulations page
 # EXAMPLE: "https://www.university.edu/rules"
-CRAWL_URL = "https://www.example.edu/regulations"  # <--- !!! CHANGE THIS !!!
-UNIVERSITY_DOMAIN = "https://www.example.edu"   # <--- !!! CHANGE THIS for relative links !!!
+CRAWL_URL = "https://research.ikiu.ac.ir/fa/%D9%81%D8%B1%D8%A2%DB%8C%D9%86%D8%AF%D9%87%D8%A7"  # <--- !!! CHANGE THIS !!!
+UNIVERSITY_DOMAIN = "https://research.ikiu.ac.ir/"   # <--- !!! CHANGE THIS for relative links !!!
 
 # --- DIRECTORY SETUP ---
 # Defines the folder structure for our data.
 # Using pathlib makes paths work on any operating system.
-DATA_DIR = Path("data")
+DATA_DIR = Path("/content/drive/MyDrive/IKIU")
 RAW_PDFS_DIR = DATA_DIR / "raw_pdfs"
 IMAGES_DIR = DATA_DIR / "images"
 PROCESSED_TEXT_DIR = DATA_DIR / "processed_text"
