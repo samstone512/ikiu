@@ -4,6 +4,7 @@
 import logging
 import json
 import time
+import re
 from pathlib import Path
 from typing import Dict, Any, Optional
 
@@ -36,17 +37,8 @@ def analyze_text_for_entities(
 ) -> Optional[Dict[str, Any]]:
     """
     Analyzes a chunk of text using a Gemini model to extract entities and
-    relationships based on a provided prompt template.
-
-    Args:
-        text_chunk (str): The piece of text to analyze.
-        model (genai.GenerativeModel): The initialized Gemini model instance.
-        prompt_template (str): The prompt template string, which must contain
-                               a '{text_chunk}' placeholder.
-
-    Returns:
-        Optional[Dict[str, Any]]: A dictionary containing 'entities' and
-                                  'relationships' if successful, otherwise None.
+    relationships based on a provided prompt template. This version includes
+    more robust JSON cleaning.
     """
     if not text_chunk.strip():
         logging.warning("Input text is empty. Skipping analysis.")
@@ -62,9 +54,25 @@ def analyze_text_for_entities(
         # IMPORTANT: Add a delay to respect API rate limits.
         time.sleep(2)
 
-        # The model's response might be enclosed in markdown backticks for JSON.
-        # We need to clean it before parsing.
-        cleaned_response = response.text.strip().replace("```json", "").replace("```", "").strip()
+        # --- Robust JSON Cleaning ---
+        # The model's response might be enclosed in markdown backticks or have extra text.
+        # We find the first '{' and the last '}' to extract the JSON object.
+        raw_text = response.text
+        
+        # Use regex to find the JSON block, even with markdown
+        json_match = re.search(r'```(json)?\s*({.*?})\s*```', raw_text, re.DOTALL)
+        if json_match:
+            cleaned_response = json_match.group(2)
+        else:
+            # Fallback for cases where markdown is not used
+            start_index = raw_text.find('{')
+            end_index = raw_text.rfind('}')
+            if start_index != -1 and end_index != -1:
+                cleaned_response = raw_text[start_index:end_index+1]
+            else:
+                logging.error("No valid JSON object found in the model's response.")
+                logging.debug(f"Model raw response was: {raw_text}")
+                return None
 
         # Attempt to parse the cleaned string as JSON.
         structured_data = json.loads(cleaned_response)
@@ -78,7 +86,7 @@ def analyze_text_for_entities(
             return None
 
     except json.JSONDecodeError:
-        logging.error("Failed to decode JSON from the model's response.")
+        logging.error("Failed to decode JSON from the model's response even after cleaning.")
         logging.debug(f"Model raw response was: {response.text}")
         return None
     except Exception as e:
