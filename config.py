@@ -31,9 +31,20 @@ GEMINI_VISION_MODEL_NAME = 'gemini-pro-vision'
 GEMINI_TEXT_MODEL_NAME = 'gemini-1.5-flash'
 GEMINI_EMBEDDING_MODEL_NAME = 'models/text-embedding-004'
 
+# Phase 03: Model for Final Answer Generation
+GEMINI_GENERATION_MODEL_NAME = 'gemini-1.5-flash'
+
 # --- PROMPT ENGINEERING ---
 # Phase 01: Prompt for OCR
 OCR_PROMPT = "You are an expert OCR system. Extract all the Persian text from this image exactly as it appears. Do not add any commentary or explanation. Just provide the raw text."
 
 # Phase 02: Path to the prompt file for Entity and Relationship Extraction
 ENTITY_EXTRACTION_PROMPT_PATH = PROMPTS_DIR / "entity_extraction.txt"
+
+# Phase 03: Path to the prompt file for the RAG pipeline
+RAG_PROMPT_PATH = PROMPTS_DIR / "rag_prompt.txt"
+
+# --- RAG PIPELINE CONFIGURATION ---
+CHROMA_COLLECTION_NAME = "ikiu_regulations"
+VECTOR_SEARCH_TOP_K = 3
+GRAPH_SEARCH_DEPTH = 2
