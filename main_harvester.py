@@ -7,13 +7,9 @@ import json
 import logging
 from pathlib import Path
 
-# This special block handles running in Google Colab and importing the API key.
-try:
-    from google.colab import userdata
-    import google.generativeai as genai
-except ImportError:
-    # This helps prevent errors if run outside of Colab, though it's designed for it.
-    pass
+# We now use 'os' to get the API key from environment variables
+# The google.colab import is no longer needed here, making the script cleaner.
+import google.generativeai as genai
 
 # Import project-specific modules and configurations
 import config
@@ -35,18 +31,17 @@ def main():
     logging.info("======================================================")
 
     # --- 2. CONFIGURE GEMINI API ---
-    # Securely read the API key from Colab's secret manager.
+    # A more robust way to get the API key in Colab is from an environment variable.
+    # This avoids issues when running scripts with `!python`.
     try:
-        api_key = userdata.get('GOOGLE_API_KEY')
+        api_key = os.getenv('GOOGLE_API_KEY')
         if not api_key:
-            logging.error("FATAL: 'GOOGLE_API_KEY' not found in Colab secrets. Please add it.")
+            logging.error("FATAL: 'GOOGLE_API_KEY' environment variable not set. Please set it in your Colab notebook.")
             sys.exit(1)
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel(config.GEMINI_MODEL_NAME)
+        # BUG FIX: Corrected the model name to use the one specified for vision tasks in config.
+        model = genai.GenerativeModel(config.GEMINI_VISION_MODEL_NAME)
         logging.info("Successfully configured Google Gemini API.")
-    except NameError:
-        logging.error("FATAL: Script is not running in a Google Colab environment or 'userdata' is unavailable.")
-        sys.exit(1)
     except Exception as e:
         logging.error(f"FATAL: Failed to configure Gemini API. Error: {e}")
         sys.exit(1)
