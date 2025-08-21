@@ -24,8 +24,8 @@ KNOWLEDGE_GRAPH_DIR = DRIVE_BASE_PATH / "knowledge_graph"
 VECTOR_DB_DIR = DRIVE_BASE_PATH / "vector_db"
 
 # --- API & MODEL CONFIGURATION ---
-# Phase 01: Model for OCR (Vision)
-GEMINI_VISION_MODEL_NAME = 'gemini-pro-vision'
+# Phase 01: Model for OCR (Vision) - CORRECTED MODEL NAME
+GEMINI_VISION_MODEL_NAME = 'gemini-1.5-pro-latest'
 
 # Phase 02: Models for Text Analysis and Embedding
 GEMINI_TEXT_MODEL_NAME = 'gemini-1.5-flash'
