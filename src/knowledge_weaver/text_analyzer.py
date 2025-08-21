@@ -38,7 +38,7 @@ def analyze_text_for_entities(
     """
     Analyzes a chunk of text using a Gemini model to extract entities and
     relationships based on a provided prompt template. This version includes
-    more robust JSON cleaning.
+    more robust JSON cleaning and safety settings.
     """
     if not text_chunk.strip():
         logging.warning("Input text is empty. Skipping analysis.")
@@ -49,7 +49,22 @@ def analyze_text_for_entities(
         prompt = prompt_template.format(text_chunk=text_chunk)
 
         logging.info("Sending text chunk to Gemini for entity extraction...")
-        response = model.generate_content(prompt)
+
+        # --- ADDED SAFETY SETTINGS ---
+        # This prevents the model from blocking responses that might be
+        # falsely flagged, which can result in an empty or malformed response.
+        # This is crucial when expecting a strict JSON output.
+        safety_settings = {
+            'HARM_CATEGORY_HARASSMENT': 'BLOCK_NONE',
+            'HARM_CATEGORY_HATE_SPEECH': 'BLOCK_NONE',
+            'HARM_CATEGORY_SEXUALLY_EXPLICIT': 'BLOCK_NONE',
+            'HARM_CATEGORY_DANGEROUS_CONTENT': 'BLOCK_NONE',
+        }
+
+        response = model.generate_content(
+            prompt,
+            safety_settings=safety_settings # Apply the settings here
+        )
 
         # IMPORTANT: Add a delay to respect API rate limits.
         time.sleep(2)
