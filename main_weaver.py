@@ -1,16 +1,12 @@
 # main_weaver.py
 # Main executable script for the Knowledge Weaver phase of Project Danesh.
 
+import os
 import sys
 import logging
 from typing import List, Dict, Any
 
-# Handle Google Colab environment for API key access
-try:
-    from google.colab import userdata
-    import google.generativeai as genai
-except ImportError:
-    pass
+import google.generativeai as genai
 
 # Import project configurations and modules
 import config
@@ -34,16 +30,13 @@ def main():
 
     # --- 2. CONFIGURE GEMINI API ---
     try:
-        api_key = userdata.get('GOOGLE_API_KEY')
+        api_key = os.getenv('GOOGLE_API_KEY')
         if not api_key:
-            logging.error("FATAL: 'GOOGLE_API_KEY' not found in Colab secrets.")
+            logging.error("FATAL: 'GOOGLE_API_KEY' environment variable not set.")
             sys.exit(1)
         genai.configure(api_key=api_key)
         text_model = genai.GenerativeModel(config.GEMINI_TEXT_MODEL_NAME)
         logging.info("Successfully configured Google Gemini API for text and embedding models.")
-    except NameError:
-        logging.error("FATAL: Script not in Colab or 'userdata' unavailable.")
-        sys.exit(1)
     except Exception as e:
         logging.error(f"FATAL: Failed to configure Gemini API. Error: {e}")
         sys.exit(1)
@@ -70,9 +63,6 @@ def main():
     all_structured_data: List[Dict[str, Any]] = []
 
     for doc in documents:
-        # Note: For very large documents, you might need to split the text
-        # into smaller chunks before sending to the analyzer.
-        # For now, we process the full text of each document.
         structured_data = analyze_text_for_entities(
             doc['full_text'], text_model, prompt_template
         )
@@ -88,8 +78,7 @@ def main():
     save_graph(knowledge_graph, config.KNOWLEDGE_GRAPH_DIR)
 
     # --- 7. SETUP VECTOR STORE AND EMBEDDINGS ---
-    # We use a clear and consistent name for our collection.
-    collection_name = "ikiu_regulations"
+    collection_name = config.CHROMA_COLLECTION_NAME
     setup_chroma_collection(
         db_path=config.VECTOR_DB_DIR,
         collection_name=collection_name,
