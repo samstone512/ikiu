@@ -1,22 +1,37 @@
 # config.py
-# Centralized configuration file for Project Danesh
+# Centralized configuration file for Project Danesh.
 
 from pathlib import Path
 
-# --- IMPORTANT: USER CONFIGURATION ---
-# The user needs to set their Google API Key in Google Colab's secrets.
-# This script will read it from there.
-# The target URL for crawling must also be set by the user.
+# --- CRITICAL SETUP: GOOGLE DRIVE INTEGRATION ---
+# This configuration is now set to your specific Google Drive path.
+# All data will be read from and written to this directory.
+DRIVE_BASE_PATH = Path("/content/drive/MyDrive/IKIU")
 
-# The base URL of the university's regulations page
-# EXAMPLE: "https://www.university.edu/rules"
-CRAWL_URL = "https://research.ikiu.ac.ir/fa/%D9%81%D8%B1%D8%A2%DB%8C%D9%86%D8%AF%D9%87%D8%A7"  # <--- !!! CHANGE THIS !!!
-UNIVERSITY_DOMAIN = "https://research.ikiu.ac.ir/"   # <--- !!! CHANGE THIS for relative links !!!
+# --- SUB-DIRECTORY DEFINITIONS ---
+# Defines the folder structure for our data within your IKIU folder.
+# The main script will create these folders if they don't exist.
 
-# --- DIRECTORY SETUP ---
-# Defines the folder structure for our data.
-# Using pathlib makes paths work on any operating system.
-DATA_DIR = Path("/content/drive/MyDrive/IKIU")
-RAW_PDFS_DIR = DATA_DIR / "raw_pdfs"
-IMAGES_DIR = DATA_DIR / "images"
-PROCESSED_TEXT_DIR = DATA_DIR / "processed_text"
+# 1. RAW_PDFS_DIR:
+#    !!! IMPORTANT !!!
+#    Place your source PDF files inside this directory before running the script.
+#    Path: /content/drive/MyDrive/IKIU/raw_pdfs/
+RAW_PDFS_DIR = DRIVE_BASE_PATH / "raw_pdfs"
+
+# 2. IMAGES_DIR:
+#    This directory will store the PNG images converted from the PDF pages.
+#    Path: /content/drive/MyDrive/IKIU/images/
+IMAGES_DIR = DRIVE_BASE_PATH / "images"
+
+# 3. PROCESSED_TEXT_DIR:
+#    The final extracted text will be saved here as structured JSON files.
+#    Path: /content/drive/MyDrive/IKIU/processed_text/
+PROCESSED_TEXT_DIR = DRIVE_BASE_PATH / "processed_text"
+
+# --- API & MODEL CONFIGURATION ---
+# Defines the model we'll use for OCR.
+GEMINI_MODEL_NAME = 'gemini-pro-vision'
+
+# The prompt sent to the Gemini API for text extraction.
+# This prompt is designed to get only the raw Persian text without extra commentary.
+OCR_PROMPT = "You are an expert OCR system. Extract all the Persian text from this image exactly as it appears. Do not add any commentary or explanation. Just provide the raw text."
