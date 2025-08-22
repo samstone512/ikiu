@@ -4,13 +4,13 @@
 import logging
 import json
 import time
-import re
 from pathlib import Path
 from typing import Dict, Any, Optional
 
 import google.generativeai as genai
+from google.generativeai.types import HarmCategory, HarmBlockThreshold
 
-# --- ADDED: Configuration for retry mechanism ---
+# Configuration for retry mechanism
 MAX_RETRIES = 3
 RETRY_DELAY_SECONDS = 5
 
@@ -34,64 +34,80 @@ def analyze_text_for_entities(
     prompt_template: str
 ) -> Optional[Dict[str, Any]]:
     """
-    Analyzes a chunk of text using a Gemini model to extract entities and
-    relationships. This version includes a retry mechanism for API calls.
+    Analyzes a chunk of text using a Gemini model in JSON Mode to ensure
+    a valid JSON output, with a retry mechanism for transient errors.
     """
     if not text_chunk.strip():
         logging.warning("Input text is empty. Skipping analysis.")
         return None
 
-    # --- ADDED: Retry Loop ---
+    # --- ADDED: Define the exact JSON schema the model MUST follow ---
+    json_schema = {
+        "type": "object",
+        "properties": {
+            "entities": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "id": {"type": "string"},
+                        "type": {"type": "string"},
+                    },
+                    "required": ["id", "type"]
+                }
+            },
+            "relationships": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "source": {"type": "string"},
+                        "target": {"type": "string"},
+                        "type": {"type": "string"},
+                    },
+                    "required": ["source", "target", "type"]
+                }
+            }
+        },
+        "required": ["entities", "relationships"]
+    }
+
+    generation_config = {
+        "response_mime_type": "application/json",
+        "response_schema": json_schema
+    }
+
+    safety_settings = {
+        HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+        HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+        HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+        HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+    }
+
     for attempt in range(MAX_RETRIES):
         try:
-            # Format the prompt with the actual text chunk.
             prompt = prompt_template.format(text_chunk=text_chunk)
-
             logging.info(f"Sending text chunk to Gemini for entity extraction (Attempt {attempt + 1}/{MAX_RETRIES})...")
-
-            safety_settings = {
-                'HARM_CATEGORY_HARASSMENT': 'BLOCK_NONE',
-                'HARM_CATEGORY_HATE_SPEECH': 'BLOCK_NONE',
-                'HARM_CATEGORY_SEXUALLY_EXPLICIT': 'BLOCK_NONE',
-                'HARM_CATEGORY_DANGEROUS_CONTENT': 'BLOCK_NONE',
-            }
 
             response = model.generate_content(
                 prompt,
+                generation_config=generation_config,
                 safety_settings=safety_settings
             )
             
-            # --- Robust JSON Cleaning ---
-            raw_text = response.text
-            json_match = re.search(r'```(json)?\s*({.*?})\s*```', raw_text, re.DOTALL)
-            if json_match:
-                cleaned_response = json_match.group(2)
-            else:
-                start_index = raw_text.find('{')
-                end_index = raw_text.rfind('}')
-                if start_index != -1 and end_index != -1:
-                    cleaned_response = raw_text[start_index:end_index+1]
-                else:
-                    # This triggers a retry if no JSON is found
-                    raise ValueError("No valid JSON object found in the model's response.")
+            # In JSON mode, the response.text is a guaranteed valid JSON string
+            structured_data = json.loads(response.text)
 
-            structured_data = json.loads(cleaned_response)
+            logging.info("Successfully extracted structured data from text chunk using JSON Mode.")
+            return structured_data
 
-            if 'entities' in structured_data and 'relationships' in structured_data:
-                logging.info("Successfully extracted structured data from text chunk.")
-                return structured_data # Success! Exit the loop and function.
-            else:
-                # This also triggers a retry if JSON is valid but keys are missing
-                raise ValueError("Parsed JSON is missing 'entities' or 'relationships' keys.")
-
-        except (json.JSONDecodeError, ValueError, Exception) as e:
+        except Exception as e:
             logging.warning(f"Attempt {attempt + 1} failed. Error: {e}")
             if attempt < MAX_RETRIES - 1:
                 logging.info(f"Retrying in {RETRY_DELAY_SECONDS} seconds...")
                 time.sleep(RETRY_DELAY_SECONDS)
             else:
                 logging.error("All retry attempts failed for this text chunk.")
-                logging.debug(f"Final failed raw response was: {response.text if 'response' in locals() else 'No response'}")
-                return None # Return None after all retries have failed
+                return None
 
-    return None # Should not be reached, but as a fallback
+    return None
