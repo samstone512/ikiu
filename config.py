@@ -4,12 +4,6 @@
 from pathlib import Path
 
 # --- Base Paths ---
-# We define two separate base paths for clarity and portability:
-# 1. PROJECT_ROOT: The root directory of the Git repository. This is used for
-#    locating project files like prompts. It makes the code independent of where it's run.
-# 2. DRIVE_BASE_PATH: The specific path on Google Drive where all runtime data
-#    (PDFs, images, JSONs, databases) is stored. This is specific to the Colab environment.
-
 PROJECT_ROOT = Path(__file__).parent.resolve()
 DRIVE_BASE_PATH = Path("/content/drive/MyDrive/IKIU")
 
@@ -24,27 +18,20 @@ KNOWLEDGE_GRAPH_DIR = DRIVE_BASE_PATH / "knowledge_graph"
 VECTOR_DB_DIR = DRIVE_BASE_PATH / "vector_db"
 
 # --- API & MODEL CONFIGURATION ---
-# Phase 01: Model for OCR (Vision) - CORRECTED MODEL NAME
 GEMINI_VISION_MODEL_NAME = 'gemini-1.5-pro-latest'
-
-# Phase 02: Models for Text Analysis and Embedding
 GEMINI_TEXT_MODEL_NAME = 'gemini-1.5-flash'
 GEMINI_EMBEDDING_MODEL_NAME = 'models/text-embedding-004'
-
-# Phase 03: Model for Final Answer Generation
 GEMINI_GENERATION_MODEL_NAME = 'gemini-1.5-flash'
 
 # --- PROMPT ENGINEERING ---
-# Phase 01: Prompt for OCR
 OCR_PROMPT = "You are an expert OCR system. Extract all the Persian text from this image exactly as it appears. Do not add any commentary or explanation. Just provide the raw text."
-
-# Phase 02: Path to the prompt file for Entity and Relationship Extraction
 ENTITY_EXTRACTION_PROMPT_PATH = PROMPTS_DIR / "entity_extraction.txt"
-
-# Phase 03: Path to the prompt file for the RAG pipeline
 RAG_PROMPT_PATH = PROMPTS_DIR / "rag_prompt.txt"
 
 # --- RAG PIPELINE CONFIGURATION ---
 CHROMA_COLLECTION_NAME = "ikiu_regulations"
-VECTOR_SEARCH_TOP_K = 3
+# --- UPDATED: Retrieve more candidates for re-ranking ---
+VECTOR_SEARCH_TOP_K = 10 
 GRAPH_SEARCH_DEPTH = 2
+# --- ADDED: Number of documents to keep after re-ranking ---
+RERANK_TOP_N = 3
