@@ -63,8 +63,7 @@ def create_chatbot_interface():
             ["حداقل نمره قبولی در هر درس چقدر است؟"]
         ],
         theme="soft",
-        retry_btn=None,
-        undo_btn=None,
+        # REMOVED unsupported arguments: retry_btn and undo_btn
         clear_btn="Clear Conversation",
     )
 
