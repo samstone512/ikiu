@@ -51,8 +51,16 @@ def setup_chroma_collection(
         db_path.mkdir(parents=True, exist_ok=True)
         client = chromadb.PersistentClient(path=str(db_path))
 
-        # Create or get the collection. This also clears the old collection if it exists.
-        client.delete_collection(name=collection_name)
+        # --- CORRECTED LOGIC ---
+        # Safely delete the collection only if it exists.
+        try:
+            client.delete_collection(name=collection_name)
+            logging.info(f"Existing collection '{collection_name}' deleted.")
+        except Exception:
+            # This is expected if the collection doesn't exist.
+            logging.info(f"Collection '{collection_name}' did not exist. A new one will be created.")
+            pass
+        
         collection = client.create_collection(name=collection_name)
         logging.info(f"ChromaDB collection '{collection_name}' is ready.")
 
@@ -85,8 +93,6 @@ def setup_chroma_collection(
              return
 
         # Add the chunked data to the collection.
-        # Note: ChromaDB can handle adding in batches for very large datasets.
-        # For our use case, adding all at once is fine.
         collection.add(
             embeddings=embeddings,
             documents=all_chunks,
