@@ -57,14 +57,14 @@ def create_chatbot_interface():
         به دانِش، دستیار هوش مصنوعی شما برای آیین‌نامه‌های دانشگاه خوش آمدید.
         هر سوالی در مورد قوانین دانشگاه دارید بپرسید، من تلاش می‌کنم بر اساس اسناد رسمی به آن پاسخ دهم.
         """,
+        # --- UPDATED EXAMPLES ---
+        # These examples are now directly related to the provided PDF documents.
         examples=[
-            ["شرایط مرخصی تحصیلی چیست؟"],
-            ["برای حذف اضطراری یک درس چه کاری باید انجام دهم؟"],
-            ["حداقل نمره قبولی در هر درس چقدر است؟"]
+            ["شرایط استفاده از فرصت مطالعاتی برای اعضای هیئت علمی چیست؟"],
+            ["معیارهای انتخاب پژوهشگر برگزیده دانشگاه چیست؟"],
+            ["سرقت علمی به چه معناست و چه مصادیقی دارد؟"]
         ],
         theme="soft",
-        # REMOVED unsupported arguments: retry_btn and undo_btn
-        clear_btn="Clear Conversation",
     )
 
     logging.info("Launching Gradio interface...")
