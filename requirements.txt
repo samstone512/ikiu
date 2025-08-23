@@ -1,9 +1,18 @@
-google-generativeai
-beautifulsoup4
-requests
-Pillow
-pdf2image
+# PDF and OCR Processing
+PyMuPDF
+pytesseract
+
+# Knowledge Graph
 networkx
-chromadb
-matplotlib
+gemini-api # Placeholder for the actual library name, adjust if different
+
+# Vector Store
+faiss-cpu # We use the CPU version for broader compatibility
+
+# Web Framework for Chatbot
 gradio
+
+# Standard Data Science Libraries
+pandas
+numpy
+tqdm
