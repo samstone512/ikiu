@@ -1,7 +1,7 @@
 # PDF and OCR Processing
 PyMuPDF
 pytesseract
-
+Pillow
 # Knowledge Graph
 networkx
 gemini-api # Placeholder for the actual library name, adjust if different
