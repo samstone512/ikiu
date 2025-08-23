@@ -1,37 +1,41 @@
-# config.py
-# Centralized configuration file for Project Danesh.
+import os
 
-from pathlib import Path
+# --- Google Drive Paths ---
+# Base path for the project in Google Drive
+# Note: You'll need to mount your Google Drive in Colab and adjust this base path.
+# Example: '/content/drive/MyDrive/Danesh_Project_v2'
+DRIVE_BASE_PATH = '/content/drive/MyDrive/Danesh_Project_v2' 
 
-# --- Base Paths ---
-PROJECT_ROOT = Path(__file__).parent.resolve()
-DRIVE_BASE_PATH = Path("/content/drive/MyDrive/IKIU")
+# Data paths
+DATA_PATH = os.path.join(DRIVE_BASE_PATH, 'data/')
+PROCESSED_DATA_PATH = os.path.join(DRIVE_BASE_PATH, 'processed_data/')
 
-# --- Project-Relative Directories (Located in the Git Repo) ---
-PROMPTS_DIR = PROJECT_ROOT / "prompts"
+# Artifact paths
+KNOWLEDGE_GRAPH_PATH = os.path.join(DRIVE_BASE_PATH, 'knowledge_graph/')
+VECTOR_STORE_PATH = os.path.join(DRIVE_BASE_PATH, 'vector_store/')
 
-# --- Google Drive Data Directories (Located in Google Drive) ---
-RAW_PDFS_DIR = DRIVE_BASE_PATH / "raw_pdfs"
-IMAGES_DIR = DRIVE_BASE_PATH / "images"
-PROCESSED_TEXT_DIR = DRIVE_BASE_PATH / "processed_text"
-KNOWLEDGE_GRAPH_DIR = DRIVE_BASE_PATH / "knowledge_graph"
-VECTOR_DB_DIR = DRIVE_BASE_PATH / "vector_db"
+# --- Model & API Keys ---
+# Securely load the Gemini API Key from Google Colab's secrets.
+# This prevents exposing the key directly in the code.
+GEMINI_API_KEY = None
+try:
+    from google.colab import userdata
+    GEMINI_API_KEY = userdata.get('GEMINI_API_KEY')
+    if GEMINI_API_KEY is None:
+        print("Warning: 'GEMINI_API_KEY' not found in Colab secrets.")
+except ImportError:
+    print("Warning: Not in a Colab environment. API key loading from secrets is skipped.")
 
-# --- API & MODEL CONFIGURATION ---
-GEMINI_VISION_MODEL_NAME = 'gemini-1.5-pro-latest'
-GEMINI_TEXT_MODEL_NAME = 'gemini-1.5-flash'
-GEMINI_EMBEDDING_MODEL_NAME = 'models/text-embedding-004'
-GEMINI_GENERATION_MODEL_NAME = 'gemini-1.5-flash'
+# --- Document Processing ---
+# Settings for Tesseract OCR, if needed
+# Example: TESSERACT_CMD_PATH = '/usr/bin/tesseract' # for Linux/Colab
 
-# --- PROMPT ENGINEERING ---
-OCR_PROMPT = "You are an expert OCR system. Extract all the Persian text from this image exactly as it appears. Do not add any commentary or explanation. Just provide the raw text."
-ENTITY_EXTRACTION_PROMPT_PATH = PROMPTS_DIR / "entity_extraction.txt"
-RAG_PROMPT_PATH = PROMPTS_DIR / "rag_prompt.txt"
+# --- Intelligent Chunking Parameters ---
+CHUNK_SIZE = 1024
+CHUNK_OVERLAP = 128
 
-# --- RAG PIPELINE CONFIGURATION ---
-CHROMA_COLLECTION_NAME = "ikiu_regulations"
-# --- UPDATED: Retrieve more candidates for re-ranking ---
-VECTOR_SEARCH_TOP_K = 10 
-GRAPH_SEARCH_DEPTH = 2
-# --- ADDED: Number of documents to keep after re-ranking ---
-RERANK_TOP_N = 3
+# --- FAISS Vector Store ---
+FAISS_INDEX_NAME = "faiss_index.bin"
+
+# --- Knowledge Graph ---
+GRAPH_FILE_NAME = "knowledge_graph.gml"
