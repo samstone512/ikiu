@@ -51,7 +51,7 @@ def clean_extracted_text(full_text: str) -> str:
         r'.*(?:کد\s*پستی|تلفن|فاکس|دورنگار|صندوق پستی)\s*[:=]\s*[\d\s-–()]+.*',
         r'.*(?:رونوشت|از طرف|مدیر کل|رئیس اداره|وزیر|معاون|رئیس جمهور|امضاء)\s*[:=]?.*',
         r'^\s*\d+\s*$',
-        r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-_.-]+\.[A-Z|a-z]{2,}\b',
+        r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b',
         r'https?://[^\s/$.?#].[^\s]*'
     ]
     cleaned_text = full_text
@@ -74,7 +74,10 @@ def intelligent_chunking(cleaned_text: str) -> List[Dict[str, str]]:
     pattern = r'(?=\n\s*(?:ماده|تبصره|اصل)\s+[\d]+(?:-|\s*\.|\s*:|\s+))'
     raw_chunks = re.split(pattern, cleaned_text, flags=re.MULTILINE)
     structured_chunks = []
-    chunk_header_pattern = r'^\s*(?P<type>ماده|تبصره|اصل)\s+(?P<id>[\d]+)[\s-–.:]*(?P<content>.*)'
+    
+    # --- THE FIX IS IN THE LINE BELOW ---
+    # We added a backslash before the hyphen: [\s\-–.:]
+    chunk_header_pattern = r'^\s*(?P<type>ماده|تبصره|اصل)\s+(?P<id>[\d]+)[\s\-–.:]*(?P<content>.*)'
 
     for chunk in raw_chunks:
         if not chunk.strip():
@@ -90,7 +93,6 @@ def intelligent_chunking(cleaned_text: str) -> List[Dict[str, str]]:
                 "content": chunk_data["content"].strip()
             })
         else:
-            # --- THIS IS THE MISSING BLOCK THAT CAUSED THE ERROR ---
             structured_chunks.append({
                 "type": "مقدمه",
                 "identifier": "0",
