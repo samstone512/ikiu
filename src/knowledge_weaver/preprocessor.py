@@ -15,18 +15,22 @@ def clean_document_text(raw_text: str) -> str:
     Returns:
         str: The cleaned text, ready for semantic chunking.
     """
+    print("Cleaning raw document text...")
+    
     # --- Regex patterns to identify and remove noise from official documents ---
-    # These patterns are inspired by your excellent suggestions.
+    # These patterns are based on your excellent suggestions and expanded for robustness.
     patterns_to_remove = [
         r'^\s*صفحه \d+ از \d+\s*$',  # Page numbers like "صفحه 2 از 7"
         r'^\s*(?:بسمه تعالی|به نام خدا)\s*$',  # Starting phrases
         r'^\s*(?:شماره|تاریخ|پیوست)\s*:.*',  # Header metadata like "شماره:", "تاریخ:"
-        r'.*(?:کد\s*پستی|تلفن|فاکس|دورنگار|صندوق پستی|Website|Email)\s*[:=]?.*', # Contact info
-        r'^\s*دانشگاه بین المللی امام خمینی \(ره\).*', # University headers
+        r'.*(?:کد\s*پستی|تلفن|فاکس|دورنگار|صندوق پستی|Website|Email|نشانی)\s*[:=]?.*', # Contact info
+        r'^\s*دانشگاه بین المللی امام خمینی.*', # University headers
         r'IMAM KHOMEINI\s+INTERNATIONAL UNIVERSITY', # University headers (English)
         r'^\s*رونوشت به.*', # "Ronevesht be..." sections
-        r'.*(?:معاون(?:ت)?|وزیر|رئیس|مدیر کل|امضاء|کامران دانشجو|محمد مهدی نژاد نوری)\s*[:=]?.*', # Signatures and titles
-        r'^\s*([a-zA-Z0-9\s-]{10,})$' # Removes lines that are likely stray English headers/footers
+        r'.*(?:معاون(?:ت)?|وزیر|رئیس|مدیر کل|امضاء|کامران دانشجو|محمد مهدی نژاد نوری|اسحاق جهانگیری)\s*[:=]?.*', # Signatures and titles
+        r'^\s*\d+\s*$', # Lines containing only numbers (likely page numbers)
+        r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', # Email addresses
+        r'https?://[^\s/$.?#].[^\s]*' # URLs
     ]
 
     cleaned_lines = []
@@ -38,4 +42,6 @@ def clean_document_text(raw_text: str) -> str:
         if not should_remove and line.strip():
             cleaned_lines.append(line)
             
-    return "\n".join(cleaned_lines)
+    cleaned_text = "\n".join(cleaned_lines)
+    print("Text cleaning complete.")
+    return cleaned_text
