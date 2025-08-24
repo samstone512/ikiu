@@ -1,105 +1,105 @@
 # src/knowledge_weaver/text_splitter.py
-# This module contains a professional-grade Recursive Character Text Splitter.
+# This module is upgraded to perform hybrid semantic chunking.
 
 import re
-from typing import List, Any
+from typing import List
 
-# --- Configuration for the text splitter ---
-CHUNK_SIZE = 1500      # The target size of each chunk in characters. Increased for better context.
-CHUNK_OVERLAP = 250    # The number of characters to overlap between chunks.
+# --- Configuration for the fallback recursive splitter ---
+CHUNK_SIZE = 1500
+CHUNK_OVERLAP = 250
 
-class RecursiveCharacterTextSplitter:
+def _recursive_split(text: str, separators: List[str]) -> List[str]:
     """
-    A professional text splitter that recursively tries to split text based on a
-    hierarchy of separators to keep semantically related text together.
+    The core logic for the recursive splitting strategy (our fallback).
     """
-    def __init__(self, chunk_size: int = CHUNK_SIZE, chunk_overlap: int = CHUNK_OVERLAP):
-        self.chunk_size = chunk_size
-        self.chunk_overlap = chunk_overlap
-        # Separators are ordered from largest semantic unit to smallest.
-        # This is crucial for keeping paragraphs and table rows intact.
-        self.separators = ["\n\n", "\n", ". ", " ", ""]
+    final_chunks = []
+    if not text:
+        return []
 
-    def _split_text(self, text: str, separators: List[str]) -> List[str]:
-        """The core recursive splitting logic."""
-        final_chunks = []
-        
-        # Get the first separator
-        separator = separators[0]
-        
-        # If the separator is empty, we split by character as a last resort.
-        if separator == "":
-            for i in range(0, len(text), self.chunk_size):
-                chunk = text[i:i + self.chunk_size]
-                final_chunks.append(chunk)
-            return final_chunks
-
-        # Split the text by the current separator
-        splits = text.split(separator)
-        
-        # Process each split
-        good_splits = []
-        for s in splits:
-            if len(s) < self.chunk_size:
-                good_splits.append(s)
-            else:
-                # If a split is too large, we recursively call the function
-                # with the *next* separator in the list.
-                if len(separators) > 1:
-                    deeper_chunks = self._split_text(s, separators[1:])
-                    good_splits.extend(deeper_chunks)
-                else:
-                    # If there are no more separators, add the large chunk as is.
-                    good_splits.append(s)
-        
-        # Merge small splits back together to form chunks of the desired size
-        current_chunk = ""
-        for split in good_splits:
-            # If adding the next split doesn't exceed the chunk size, add it
-            if len(current_chunk) + len(split) + (len(separator) if current_chunk else 0) <= self.chunk_size:
-                if current_chunk:
-                    current_chunk += separator + split
-                else:
-                    current_chunk = split
-            else:
-                # Otherwise, the current chunk is complete
-                final_chunks.append(current_chunk)
-                # Start a new chunk with the current split
-                current_chunk = split
-        
-        # Add the last remaining chunk
-        if current_chunk:
-            final_chunks.append(current_chunk)
-            
+    # If we've reached the end of separators, split by character
+    if not separators:
+        for i in range(0, len(text), CHUNK_SIZE):
+            final_chunks.append(text[i:i + CHUNK_SIZE])
         return final_chunks
 
-    def split_text_into_chunks(self, text: str) -> List[str]:
-        """
-        Public method to split a long text into smaller, overlapping chunks.
-        """
-        if not text:
-            return []
+    separator = separators[0]
+    splits = text.split(separator)
+    
+    current_chunk = ""
+    for s in splits:
+        # If adding the next split exceeds chunk size, finalize the current chunk
+        if len(current_chunk) + len(s) + len(separator) > CHUNK_SIZE:
+            if current_chunk:
+                final_chunks.append(current_chunk)
+            current_chunk = s
+        else:
+            # Otherwise, append the split to the current chunk
+            if current_chunk:
+                current_chunk += separator + s
+            else:
+                current_chunk = s
+    
+    # Add the last remaining chunk
+    if current_chunk:
+        final_chunks.append(current_chunk)
 
-        # Step 1: Perform the initial recursive split
-        initial_chunks = self._split_text(text, self.separators)
+    # Check if any of the generated chunks are still too large
+    final_final_chunks = []
+    for chunk in final_chunks:
+        if len(chunk) > CHUNK_SIZE:
+            # Recursively split the oversized chunk with the next separator
+            deeper_chunks = _recursive_split(chunk, separators[1:])
+            final_final_chunks.extend(deeper_chunks)
+        else:
+            final_final_chunks.append(chunk)
+            
+    return final_final_chunks
+
+def split_text_hybrid(cleaned_text: str) -> List[str]:
+    """
+    Splits text using a hybrid strategy: first by legal articles, 
+    and if that fails, falls back to a recursive character-based split.
+
+    Args:
+        cleaned_text (str): The pre-processed and cleaned text of a document.
+
+    Returns:
+        List[str]: A list of semantically meaningful text chunks.
+    """
+    print("Performing hybrid intelligent chunking...")
+    
+    # --- Primary Strategy: Split by Legal Articles ---
+    legal_pattern = r'(?=\n\s*(?:ماده|تبصره|اصل|بند)\s+[\w\d()]+)'
+    legal_chunks = [chunk.strip() for chunk in re.split(legal_pattern, cleaned_text) if chunk.strip()]
+    
+    # --- Heuristic Check ---
+    # If we have more than one chunk, the legal split was likely successful.
+    if len(legal_chunks) > 1:
+        print(f"Successfully split text into {len(legal_chunks)} legal article chunks.")
+        return legal_chunks
         
-        # Step 2: Create the final overlapping chunks
-        final_chunks_with_overlap = []
-        for i in range(len(initial_chunks)):
-            chunk = initial_chunks[i]
-            # If this isn't the first chunk, add the overlap from the previous one
-            if i > 0 and self.chunk_overlap > 0:
-                previous_chunk = initial_chunks[i-1]
-                overlap = previous_chunk[-self.chunk_overlap:]
-                chunk = overlap + chunk
-            final_chunks_with_overlap.append(chunk)
+    # --- Fallback Strategy: Recursive Splitting ---
+    print("Legal structure not prominent. Falling back to recursive splitting.")
+    separators = ["\n\n", "\n", ". ", "، ", " "]
+    recursive_chunks = _recursive_split(cleaned_text, separators)
+    
+    # Apply overlap to the recursive chunks
+    final_chunks_with_overlap = []
+    for i in range(len(recursive_chunks)):
+        chunk = recursive_chunks[i]
+        if i > 0 and CHUNK_OVERLAP > 0:
+            previous_chunk = recursive_chunks[i-1]
+            overlap = previous_chunk[-CHUNK_OVERLAP:]
+            chunk = overlap + chunk
+        final_chunks_with_overlap.append(chunk)
 
-        return final_chunks_with_overlap
+    print(f"Successfully split text into {len(final_chunks_with_overlap)} recursive chunks.")
+    return final_chunks_with_overlap
 
 # --- Main function to be called from other modules ---
 def split_text(text: str) -> List[str]:
     """
-    High-level function to instantiate and use the recursive splitter.
+    High-level function to use the new hybrid splitter.
     """
-    splitter = RecursiveCharacterTextSplitter()
-    return splitter.split_text_into_chunks(text)
+    return split_text_hybrid(text)
+
