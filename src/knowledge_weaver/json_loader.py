@@ -1,5 +1,5 @@
 # src/knowledge_weaver/json_loader.py
-# Module for loading and consolidating text data from JSON files.
+# This module is updated to read the new JSON structure with cleaned text.
 
 import json
 import logging
@@ -8,8 +8,8 @@ from typing import List, Dict, Any
 
 def load_processed_texts(processed_text_dir: Path) -> List[Dict[str, Any]]:
     """
-    Loads all JSON files from the processed_text directory, consolidates the
-    page texts, and returns a list of documents.
+    Loads all JSON files from the processed_text directory and extracts the
+    pre-cleaned full text for each document.
 
     Args:
         processed_text_dir (Path): The directory containing the JSON files
@@ -17,8 +17,8 @@ def load_processed_texts(processed_text_dir: Path) -> List[Dict[str, Any]]:
 
     Returns:
         List[Dict[str, Any]]: A list where each dictionary represents a
-                              processed PDF document. Each dictionary contains
-                              the source filename and the full concatenated text.
+                              document, containing the source filename and the
+                              cleaned full text.
     """
     logging.info(f"--- Loading processed text data from: {processed_text_dir} ---")
     documents = []
@@ -35,24 +35,21 @@ def load_processed_texts(processed_text_dir: Path) -> List[Dict[str, Any]]:
             with open(json_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
 
-            # Concatenate the text from all pages into a single string.
-            # We add a separator to maintain some distinction between pages.
-            full_text = "\n--- Page Break ---\n".join(
-                page.get("extracted_text", "") for page in data.get("pages", [])
-            )
+            # --- UPDATED: Read from the new 'cleaned_full_text' field ---
+            cleaned_text = data.get("cleaned_full_text", "")
 
-            if not full_text.strip():
-                logging.warning(f"JSON file '{json_path.name}' contains no extracted text. Skipping.")
+            if not cleaned_text.strip():
+                logging.warning(f"JSON file '{json_path.name}' contains no cleaned text. Skipping.")
                 continue
 
             documents.append({
                 "source_filename": data.get("pdf_filename", "unknown_file"),
-                "full_text": full_text
+                "full_text": cleaned_text # Use the cleaned text as the main content
             })
             logging.info(f"Successfully loaded and processed '{json_path.name}'.")
 
         except json.JSONDecodeError:
-            logging.error(f"Error decoding JSON from '{json_path.name}'. The file might be corrupt. Skipping.")
+            logging.error(f"Error decoding JSON from '{json_path.name}'. Skipping.")
         except Exception as e:
             logging.error(f"An unexpected error occurred while processing '{json_path.name}': {e}")
 
