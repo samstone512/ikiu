@@ -9,12 +9,11 @@ from tqdm import tqdm
 from typing import List, Dict
 
 # --- Configuration for Tesseract ---
-# ... (tesseract path configuration remains the same) ...
-
+# If tesseract is not in your PATH, include the following line
+# pytesseract.pytesseract.tesseract_cmd = r'<full_path_to_your_tesseract_executable>'
 
 def extract_text_from_pdf(pdf_path: str) -> str:
-    """(This function remains unchanged)"""
-    # ... (code from previous step) ...
+    """Extracts text from a PDF file using a hybrid approach."""
     print(f"Processing PDF: {pdf_path}...")
     try:
         doc = fitz.open(pdf_path)
@@ -32,8 +31,9 @@ def extract_text_from_pdf(pdf_path: str) -> str:
             try:
                 ocr_text = pytesseract.image_to_string(image, lang='fas')
                 final_page_text = ocr_text
-            except Exception:
-                 final_page_text = text
+            except Exception as ocr_error:
+                print(f"\nAn error occurred during OCR on page {page_num + 1}: {ocr_error}")
+                final_page_text = text
         else:
             final_page_text = text
         full_text.append(final_page_text)
@@ -43,8 +43,7 @@ def extract_text_from_pdf(pdf_path: str) -> str:
 
 
 def clean_extracted_text(full_text: str) -> str:
-    """(This function remains unchanged)"""
-    # ... (code from previous step) ...
+    """Cleans raw text from administrative letters."""
     print("Performing advanced text cleaning for administrative documents...")
     patterns_to_remove = [
         r'^[\s\d]*(?:شماره|تاریخ|پیوست)\s*[:=].*',
@@ -52,7 +51,7 @@ def clean_extracted_text(full_text: str) -> str:
         r'.*(?:کد\s*پستی|تلفن|فاکس|دورنگار|صندوق پستی)\s*[:=]\s*[\d\s-–()]+.*',
         r'.*(?:رونوشت|از طرف|مدیر کل|رئیس اداره|وزیر|معاون|رئیس جمهور|امضاء)\s*[:=]?.*',
         r'^\s*\d+\s*$',
-        r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b',
+        r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-_.-]+\.[A-Z|a-z]{2,}\b',
         r'https?://[^\s/$.?#].[^\s]*'
     ]
     cleaned_text = full_text
@@ -69,32 +68,12 @@ def clean_extracted_text(full_text: str) -> str:
     return cleaned_text
 
 
-# --- NEW FUNCTION ADDED IN THIS STEP ---
 def intelligent_chunking(cleaned_text: str) -> List[Dict[str, str]]:
-    """
-    Splits the cleaned text into meaningful chunks based on legal keywords
-    like "ماده", "تبصره", and "اصل".
-
-    Args:
-        cleaned_text (str): The cleaned text of the legal document.
-
-    Returns:
-        List[Dict[str, str]]: A list of dictionaries, where each dictionary
-                               represents a chunk with its type, identifier, and content.
-    """
+    """Splits the cleaned text into meaningful chunks based on legal keywords."""
     print("Performing intelligent chunking...")
-    
-    # This regex uses a "positive lookahead" (?=...) to split the text
-    # WITHOUT removing the delimiter (the "ماده" or "تبصره" line itself).
-    # It looks for "ماده", "تبصره", or "اصل" at the beginning of a line.
     pattern = r'(?=\n\s*(?:ماده|تبصره|اصل)\s+[\d]+(?:-|\s*\.|\s*:|\s+))'
-    
     raw_chunks = re.split(pattern, cleaned_text, flags=re.MULTILINE)
-    
     structured_chunks = []
-    
-    # Regex to extract type and identifier from the beginning of a chunk
-    # e.g., from "ماده 12- متن ماده..." it extracts "ماده" and "12"
     chunk_header_pattern = r'^\s*(?P<type>ماده|تبصره|اصل)\s+(?P<id>[\d]+)[\s-–.:]*(?P<content>.*)'
 
     for chunk in raw_chunks:
@@ -111,3 +90,12 @@ def intelligent_chunking(cleaned_text: str) -> List[Dict[str, str]]:
                 "content": chunk_data["content"].strip()
             })
         else:
+            # --- THIS IS THE MISSING BLOCK THAT CAUSED THE ERROR ---
+            structured_chunks.append({
+                "type": "مقدمه",
+                "identifier": "0",
+                "content": chunk.strip()
+            })
+            
+    print(f"Chunking complete. Found {len(structured_chunks)} structured chunks.")
+    return structured_chunks
