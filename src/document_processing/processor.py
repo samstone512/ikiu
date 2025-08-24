@@ -75,8 +75,7 @@ def intelligent_chunking(cleaned_text: str) -> List[Dict[str, str]]:
     raw_chunks = re.split(pattern, cleaned_text, flags=re.MULTILINE)
     structured_chunks = []
     
-    # --- THE FIX IS IN THE LINE BELOW ---
-    # We added a backslash before the hyphen: [\s\-–.:]
+    # --- این خط اصلاح شده و باگ را برطرف می‌کند ---
     chunk_header_pattern = r'^\s*(?P<type>ماده|تبصره|اصل)\s+(?P<id>[\d]+)[\s\-–.:]*(?P<content>.*)'
 
     for chunk in raw_chunks:
