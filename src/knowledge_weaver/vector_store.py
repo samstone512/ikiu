@@ -1,5 +1,5 @@
 # src/knowledge_weaver/vector_store.py
-# This module is upgraded to use a full preprocessing and hybrid chunking pipeline.
+# This module is upgraded to use the new hybrid chunking pipeline on pre-cleaned text.
 
 import logging
 from pathlib import Path
@@ -8,8 +8,7 @@ from typing import List, Dict, Any
 import chromadb
 import google.generativeai as genai
 
-# --- Import the new professional text processing modules ---
-from .preprocessor import clean_document_text
+# --- Import the new professional text splitter ---
 from .text_splitter import split_text
 
 def create_text_embeddings(
@@ -42,8 +41,8 @@ def setup_chroma_collection(
     embedding_model_name: str
 ):
     """
-    Initializes ChromaDB and builds the collection using a professional
-    preprocessing and hybrid chunking pipeline.
+    Initializes ChromaDB and builds the collection using the hybrid chunking
+    pipeline on the pre-cleaned text provided by the json_loader.
     """
     logging.info("--- Setting up ChromaDB with professional processing pipeline ---")
     try:
@@ -66,12 +65,10 @@ def setup_chroma_collection(
         
         for i, doc in enumerate(documents):
             source_filename = doc.get('source_filename', 'unknown_file')
-            full_text = doc.get('full_text', '')
+            # The text is already cleaned by the harvester phase
+            cleaned_text = doc.get('full_text', '') 
             
-            # --- Step 1: Clean the raw text using the preprocessor ---
-            cleaned_text = clean_document_text(full_text)
-            
-            # --- Step 2: Split the cleaned text using the hybrid splitter ---
+            # --- Split the cleaned text using the hybrid splitter ---
             chunks = split_text(cleaned_text)
             
             for j, chunk in enumerate(chunks):
