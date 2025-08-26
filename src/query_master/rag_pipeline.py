@@ -1,11 +1,13 @@
 # src/query_master/rag_pipeline.py
 # Final version with Hypothetical Document Embeddings (HyDE) for superior retrieval.
+# This version includes a more robust re-ranking function.
 
 import logging
 import networkx as nx
 import chromadb
 import google.generativeai as genai
 from typing import List, Dict, Any
+import re # Import the regular expression module
 
 import config
 
@@ -63,7 +65,7 @@ class QueryMaster:
 
     def _generate_hypothetical_answer(self, query_text: str) -> str:
         """
-        NEW (HyDE): Generates a hypothetical, detailed answer to the user's query
+        Generates a hypothetical, detailed answer to the user's query
         to be used for embedding-based search.
         """
         logging.info("Generating hypothetical answer for HyDE...")
@@ -77,19 +79,18 @@ class QueryMaster:
             return response.text
         except Exception as e:
             logging.error(f"Error generating hypothetical answer: {e}")
-            return query_text # Fallback to the original query
+            return query_text
 
     def _search_vector_store(self, search_text: str) -> List[Dict[str, Any]]:
         """
-        Performs vector search using the provided text (which can be the original
-        query or a hypothetical answer).
+        Performs vector search using the provided text.
         """
         logging.info(f"Performing vector search...")
         try:
             query_embedding = genai.embed_content(
                 model=self.embedding_model_name,
                 content=search_text,
-                task_type="RETRIEVAL_DOCUMENT" # Use DOCUMENT type for the rich hypo-answer
+                task_type="RETRIEVAL_DOCUMENT"
             )['embedding']
             
             results = self.collection.query(
@@ -110,7 +111,11 @@ class QueryMaster:
             return []
 
     def _rerank_documents(self, docs: List[Dict[str, Any]], query: str) -> List[Dict[str, Any]]:
-        # This function remains the same, but now it receives much better candidates.
+        """
+        --- MODIFIED: This function is now more robust ---
+        It uses regex to extract numbers from the model's response, making it
+        resilient to cases where the model returns text instead of just numbers.
+        """
         logging.info(f"Re-ranking {len(docs)} documents for relevance...")
         if not docs: return []
         docs_str = "".join(f"Document {i+1}:\n{doc['text']}\n\n" for i, doc in enumerate(docs))
@@ -120,8 +125,20 @@ class QueryMaster:
         Respond with a comma-separated list of the document numbers. Example: "3,1,5" """
         try:
             response = self.text_model.generate_content(prompt)
-            relevant_indices = [int(i.strip()) - 1 for i in response.text.split(',')]
-            reranked_docs = [docs[i] for i in relevant_indices if i < len(docs)]
+            
+            # --- ROBUSTNESS FIX ---
+            # Use regex to find all numbers in the response string
+            numbers = re.findall(r'\d+', response.text)
+            if not numbers:
+                logging.warning("Re-ranker returned no numbers. Falling back to original list.")
+                return docs[:self.config.RERANK_TOP_N]
+
+            # Convert found numbers to zero-based indices
+            relevant_indices = [int(n) - 1 for n in numbers]
+            
+            # Filter and build the reranked list
+            reranked_docs = [docs[i] for i in relevant_indices if 0 <= i < len(docs)]
+            
             logging.info(f"Re-ranked documents. Selected top {len(reranked_docs)}.")
             return reranked_docs
         except Exception as e:
@@ -129,7 +146,6 @@ class QueryMaster:
             return docs[:self.config.RERANK_TOP_N]
 
     def _search_knowledge_graph(self, retrieved_docs: List[Dict[str, Any]]) -> str:
-        # This function also remains the same.
         logging.info("Searching knowledge graph for additional context...")
         all_nodes = list(self.graph.nodes())
         found_nodes = set()
@@ -148,22 +164,17 @@ class QueryMaster:
 
     def answer_question(self, user_question: str) -> str:
         """
-        The main method to answer a user's question, now using the HyDE strategy.
+        The main method to answer a user's question.
         """
-        # Step 1: NEW (HyDE) - Generate a hypothetical answer
         hypothetical_answer = self._generate_hypothetical_answer(user_question)
-
-        # Step 2: Search the vector store using the hypothetical answer
         initial_docs = self._search_vector_store(hypothetical_answer)
         if not initial_docs:
             return "متاسفانه اطلاعات مرتبطی برای پاسخ به سوال شما در منابع موجود یافت نشد."
 
-        # Step 3: Re-rank the documents to find the most relevant ones
         relevant_docs = self._rerank_documents(initial_docs, user_question)
         if not relevant_docs:
             return "پس از بررسی، اطلاعات دقیقی برای پاسخ به سوال شما یافت نشد."
 
-        # Step 4 & 5: Build context and generate the final answer (unchanged)
         vector_context_str = "".join(f"Source: {doc['metadata']['source']}\nContent: {doc['text']}\n\n" for doc in relevant_docs)
         graph_context_str = self._search_knowledge_graph(relevant_docs)
         final_prompt = self.rag_prompt_template.format(
