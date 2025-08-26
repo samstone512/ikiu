@@ -1,6 +1,6 @@
 # src/optimization_master/dataset_generator.py
 # This script automatically generates a question-answer evaluation dataset
-# from the clean text chunks processed in the Data Harvester phase.
+# and saves it directly to Google Drive to ensure persistence.
 
 import os
 import sys
@@ -14,7 +14,6 @@ import google.generativeai as genai
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 
 # --- Add the project root to the Python path ---
-# This allows us to import modules from other directories, like 'config'
 project_root = Path(__file__).resolve().parents[2]
 sys.path.append(str(project_root))
 
@@ -55,16 +54,12 @@ def get_generative_model() -> Optional[genai.GenerativeModel]:
     try:
         api_key = os.getenv('GOOGLE_API_KEY')
         if not api_key:
-            logging.error("FATAL: 'GOOGLE_API_KEY' environment variable not set.")
+            logging.error("FATال: 'GOOGLE_API_KEY' environment variable not set.")
             return None
         genai.configure(api_key=api_key)
         
-        # We will use JSON Mode to ensure the output is always a valid JSON object
-        generation_config = {
-            "response_mime_type": "application/json",
-        }
+        generation_config = {"response_mime_type": "application/json"}
         
-        # Safety settings to minimize blocking
         safety_settings = {
             HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
             HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
@@ -104,24 +99,15 @@ def generate_qa_pairs(
         prompt = DATASET_GENERATION_PROMPT.format(text_chunk=chunk)
         
         try:
-            # Generate content using the model
             response = model.generate_content(prompt)
-            
-            # The response.text is a guaranteed valid JSON string in JSON Mode
             qa_pair = json.loads(response.text)
-            
-            # Add the source chunk for reference
             qa_pair["source_chunk"] = chunk
-            
             qa_dataset.append(qa_pair)
             logging.info(f"  - Successfully generated QA pair for chunk {i + 1}.")
-            
-            # Respect API rate limits
             time.sleep(2)
 
         except Exception as e:
             logging.error(f"  - Failed to generate QA pair for chunk {i + 1}. Error: {e}")
-            # Optional: Add a retry mechanism here if needed
 
     return qa_dataset
 
@@ -136,16 +122,13 @@ def main():
     if not model:
         sys.exit(1)
 
-    # 1. Load all processed documents from Phase 01
     documents = load_processed_texts(config.PROCESSED_TEXT_DIR)
     if not documents:
         logging.warning("No processed text documents found. Exiting.")
         sys.exit(0)
 
-    # 2. Split all documents into chunks using the same logic as the Knowledge Weaver
     all_chunks = []
     for doc in documents:
-        # We use the 'full_text' which is the cleaned text
         cleaned_text = doc.get('full_text', '')
         if cleaned_text:
             chunks = split_text(cleaned_text)
@@ -155,18 +138,23 @@ def main():
         logging.error("No text chunks could be created from the documents. Cannot generate dataset.")
         sys.exit(1)
 
-    # 3. Generate the question-answer pairs
     evaluation_dataset = generate_qa_pairs(all_chunks, model)
 
-    # 4. Save the dataset to a file
     if evaluation_dataset:
-        output_path = project_root / "evaluation_dataset.json"
+        # --- MODIFIED: Define save path inside Google Drive ---
+        # 1. Create a dedicated directory for optimization results
+        output_dir = config.DRIVE_BASE_PATH / "optimization_data"
+        output_dir.mkdir(parents=True, exist_ok=True)
+        
+        # 2. Define the full path for the output file
+        output_path = output_dir / "evaluation_dataset.json"
+        
         try:
             with open(output_path, 'w', encoding='utf-8') as f:
                 json.dump(evaluation_dataset, f, ensure_ascii=False, indent=4)
-            logging.info(f"Successfully saved {len(evaluation_dataset)} QA pairs to: {output_path}")
+            logging.info(f"✅ Successfully saved {len(evaluation_dataset)} QA pairs to Google Drive: {output_path}")
         except Exception as e:
-            logging.error(f"Failed to save the evaluation dataset. Error: {e}")
+            logging.error(f"Failed to save the evaluation dataset to Google Drive. Error: {e}")
     else:
         logging.warning("No QA pairs were generated. The output file will not be created.")
 
