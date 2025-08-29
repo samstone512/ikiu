@@ -1,5 +1,6 @@
 # config.py
 # Centralized configuration file for Project Danesh.
+# --- OPTIMIZATION-V3: Upgrading OCR prompt to be structure-aware (especially for tables) ---
 
 from pathlib import Path
 
@@ -24,14 +25,26 @@ GEMINI_EMBEDDING_MODEL_NAME = 'models/text-embedding-004'
 GEMINI_GENERATION_MODEL_NAME = 'gemini-1.5-flash'
 
 # --- PROMPT ENGINEERING ---
-OCR_PROMPT = "You are an expert OCR system. Extract all the Persian text from this image exactly as it appears. Do not add any commentary or explanation. Just provide the raw text."
+# --- NEW POWERFUL, STRUCTURE-AWARE OCR PROMPT ---
+OCR_PROMPT = """
+You are an expert document digitization assistant. Your task is to analyze the provided image of a document page and convert its content into clean, structured Markdown text. Pay close attention to tables.
+
+**Instructions:**
+1.  **Extract all Persian text.**
+2.  **Preserve Structure:** Maintain the original structure of headings, lists, and paragraphs.
+3.  **Convert Tables to Markdown:** This is the most important instruction. If you detect a table, you MUST represent it using Markdown table format. Do not just extract the text line-by-line. Capture the rows and columns accurately.
+    Example of a Markdown Table:
+    | هدر ۱ | هدر ۲ | هدر ۳ |
+    |---|---|---|
+    | ردیف ۱، ستون ۱ | ردیف ۱، ستون ۲ | ردیف ۱، ستون ۳ |
+    | ردیف ۲، ستون ۱ | ردیف ۲، ستون ۲ | ردیف ۲، ستون ۳ |
+4.  **Do NOT add any commentary or explanation.** Your output should only be the clean Markdown text representing the document's content.
+"""
 ENTITY_EXTRACTION_PROMPT_PATH = PROMPTS_DIR / "entity_extraction.txt"
 RAG_PROMPT_PATH = PROMPTS_DIR / "rag_prompt.txt"
 
 # --- RAG PIPELINE CONFIGURATION ---
 CHROMA_COLLECTION_NAME = "ikiu_regulations"
-# --- UPDATED: Retrieve more candidates for re-ranking ---
 VECTOR_SEARCH_TOP_K = 10 
 GRAPH_SEARCH_DEPTH = 2
-# --- ADDED: Number of documents to keep after re-ranking ---
 RERANK_TOP_N = 3
