@@ -1,5 +1,5 @@
 # main_harvester.py
-# --- FOCUSED EXPERIMENT (FINAL VERSION): Using the new multi-page OCR function ---
+# --- FOCUSED EXPERIMENT (FINAL CORRECTED VERSION) ---
 
 import os
 import sys
@@ -11,7 +11,6 @@ import google.generativeai as genai
 
 import config
 from src.data_harvester.pdf_processor import convert_pdfs_to_images
-# --- KEY CHANGE: Import the new whole-document OCR function ---
 from src.data_harvester.ocr import extract_text_from_document
 from src.data_harvester.preprocessor import clean_document_text
 
@@ -21,14 +20,13 @@ logging.basicConfig(
     stream=sys.stdout
 )
 
-# --- Define the filename of the single book to process ---
 TARGET_BOOK_FILENAME = 'کتاب آیین نامه ی ارتقای مرتبه اعضای هیأت علمی آموزشی، پژوهشی و فناوری.pdf'
 
 def main():
     """Main function for the focused data harvesting pipeline."""
     logging.info("======================================================")
-    logging.info("    Project Danesh: Starting FOCUSED EXPERIMENT (V4)    ")
-    logging.info(f"    Targeting single document with multi-page OCR: {TARGET_BOOK_FILENAME}    ")
+    logging.info("    Project Danesh: Starting FOCUSED EXPERIMENT (V4.1)    ")
+    logging.info(f"    Targeting single document: {TARGET_BOOK_FILENAME}    ")
     logging.info("======================================================")
 
     try:
@@ -43,9 +41,6 @@ def main():
         logging.error(f"FATAL: Failed to configure Gemini API. Error: {e}")
         sys.exit(1)
     
-    # --- Ensure directories are clean for the experiment ---
-    # For a clean run, it's best to manually delete the 'images', 'processed_text', 
-    # 'knowledge_graph', 'vector_db', and 'optimization_data' folders from Drive.
     config.IMAGES_DIR.mkdir(parents=True, exist_ok=True)
     config.PROCESSED_TEXT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -54,8 +49,15 @@ def main():
         logging.error(f"FATAL: Target book '{TARGET_BOOK_FILENAME}' not found in {config.RAW_PDFS_DIR}")
         sys.exit(1)
     
-    # --- This function remains the same ---
-    convert_pdfs_to_images(config.RAW_PDFS_DIR, config.IMAGES_DIR)
+    # This list will now contain only our single target file
+    pdf_files_to_process = [target_pdf_path]
+
+    # --- KEY CHANGE: Pass the specific list to the conversion function ---
+    convert_pdfs_to_images(
+        pdf_dir=config.RAW_PDFS_DIR,
+        image_dir=config.IMAGES_DIR,
+        specific_files=pdf_files_to_process
+    )
 
     logging.info("--- Starting WHOLE DOCUMENT OCR Processing ---")
     
@@ -67,26 +69,20 @@ def main():
     pdf_name = folder.name
     json_output_path = config.PROCESSED_TEXT_DIR / f"{pdf_name}.json"
 
-    # --- KEY CHANGE: Process all pages at once ---
     image_paths = sorted(list(folder.glob('*.png')), key=lambda p: int(p.stem.split('_')[-1]))
-    
-    # Call the new function that sends all images in one go
     full_structured_text = extract_text_from_document(image_paths, model)
-    
-    # The preprocessor now cleans the structured Markdown text
     cleaned_full_text = clean_document_text(full_structured_text)
 
     output_data = {
         "pdf_filename": f"{pdf_name}.pdf",
         "total_pages": len(image_paths),
         "cleaned_full_text": cleaned_full_text
-        # We no longer need to store raw pages individually
     }
 
     try:
         with open(json_output_path, 'w', encoding='utf-8') as f:
             json.dump(output_data, f, ensure_ascii=False, indent=4)
-        logging.info(f"Successfully saved structured, cleaned text for the entire book to: {json_output_path}")
+        logging.info(f"Successfully saved structured, cleaned text for the book to: {json_output_path}")
     except Exception as e:
         logging.error(f"Failed to save JSON file. Error: {e}")
 
