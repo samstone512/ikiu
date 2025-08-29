@@ -1,6 +1,6 @@
 # config.py
 # Centralized configuration file for Project Danesh.
-# --- OPTIMIZATION-V3: Upgrading OCR prompt to be structure-aware (especially for tables) ---
+# --- OPTIMIZATION-V4: Multi-page, context-aware OCR prompt for whole-document understanding ---
 
 from pathlib import Path
 
@@ -25,26 +25,27 @@ GEMINI_EMBEDDING_MODEL_NAME = 'models/text-embedding-004'
 GEMINI_GENERATION_MODEL_NAME = 'gemini-1.5-flash'
 
 # --- PROMPT ENGINEERING ---
-# --- NEW POWERFUL, STRUCTURE-AWARE OCR PROMPT ---
+# --- NEW, WHOLE-DOCUMENT AWARE OCR PROMPT ---
 OCR_PROMPT = """
-You are an expert document digitization assistant. Your task is to analyze the provided image of a document page and convert its content into clean, structured Markdown text. Pay close attention to tables.
+You are an expert document digitization AI. You will be given a sequence of images that represent the pages of a single document. Your task is to analyze all pages together and produce one single, coherent, and clean Markdown text for the entire document.
 
-**Instructions:**
-1.  **Extract all Persian text.**
-2.  **Preserve Structure:** Maintain the original structure of headings, lists, and paragraphs.
-3.  **Convert Tables to Markdown:** This is the most important instruction. If you detect a table, you MUST represent it using Markdown table format. Do not just extract the text line-by-line. Capture the rows and columns accurately.
-    Example of a Markdown Table:
+**CRITICAL INSTRUCTIONS:**
+1.  **Acknowledge Multi-Page Context:** Understand that paragraphs, lists, and especially **tables** can be split across page breaks. Your primary goal is to intelligently stitch these broken elements together.
+2.  **Reconstruct Broken Tables:** If a table starts on one page and continues on the next, you MUST merge them into a single, complete Markdown table in your final output. Do not output two separate, incomplete tables. Preserve the headers and row continuity.
+3.  **Maintain Logical Flow:** Ensure the text flows logically from one page to the next without interruption.
+4.  **Format as Clean Markdown:** Use Markdown for headings, lists, and tables.
+    Example of a correctly reconstructed Markdown Table:
     | هدر ۱ | هدر ۲ | هدر ۳ |
     |---|---|---|
-    | ردیف ۱، ستون ۱ | ردیف ۱، ستون ۲ | ردیف ۱، ستون ۳ |
-    | ردیف ۲، ستون ۱ | ردیف ۲، ستون ۲ | ردیف ۲، ستون ۳ |
-4.  **Do NOT add any commentary or explanation.** Your output should only be the clean Markdown text representing the document's content.
+    | ردیف ۱، ستون ۱ (از صفحه ۱) | ردیف ۱، ستون ۲ (از صفحه ۱) | ردیف ۱، ستون ۳ (از صفحه ۱) |
+    | ردیف ۲، ستون ۱ (ادامه در صفحه ۲) | ردیف ۲، ستون ۲ (ادامه در صفحه ۲) | ردیف ۲، ستون ۳ (ادامه در صفحه ۲) |
+5.  **Do NOT add any commentary.** Your output should be the single, final Markdown text for the entire document.
 """
 ENTITY_EXTRACTION_PROMPT_PATH = PROMPTS_DIR / "entity_extraction.txt"
 RAG_PROMPT_PATH = PROMPTS_DIR / "rag_prompt.txt"
 
 # --- RAG PIPELINE CONFIGURATION ---
 CHROMA_COLLECTION_NAME = "ikiu_regulations"
-VECTOR_SEARCH_TOP_K = 10 
+VECTOR_SEARCH_TOP_K = 10
 GRAPH_SEARCH_DEPTH = 2
 RERANK_TOP_N = 3
