@@ -1,5 +1,5 @@
 # src/query_master/rag_pipeline.py
-# --- OPTIMIZATION V2: Replacing HyDE with a direct Query Prefixing strategy ---
+# --- FINAL OPTIMIZATION V3: Reinstating HyDE strategy on top of the best data foundation ---
 
 import logging
 import networkx as nx
@@ -45,20 +45,35 @@ class QueryMaster:
         except Exception as e:
             raise RuntimeError(f"FATAL: Could not read RAG prompt file. Error: {e}")
 
-    def _search_vector_store(self, query_text: str) -> List[Dict[str, Any]]:
+    def _generate_hypothetical_answer(self, query_text: str) -> str:
         """
-        --- MODIFIED: Performs vector search using a specific query prefix ---
-        This is a standard technique to improve retrieval quality by signaling
-        the model that the text is a 'query'.
+        Generates a hypothetical, detailed answer to the user's query
+        to be used for embedding-based search. (Reinstated for higher accuracy)
         """
-        logging.info(f"Performing vector search with query prefix...")
+        logging.info("Generating hypothetical answer for HyDE...")
+        prompt = f"""
+        لطفاً به این سوال یک پاسخ جامع و کامل بدهید. این پاسخ برای جستجوی اسناد مرتبط استفاده خواهد شد، بنابراین باید شامل کلمات کلیدی و مفاهیم احتمالی باشد.
+        سوال: {query_text}
+        """
         try:
-            # The 'embed_content' API is optimized for specific task types.
-            # Using 'RETRIEVAL_QUERY' is the correct approach for search queries.
+            response = self.text_model.generate_content(prompt)
+            logging.info("Hypothetical answer generated successfully.")
+            return response.text
+        except Exception as e:
+            logging.error(f"Error generating hypothetical answer: {e}")
+            return query_text # Fallback to the original query
+
+    def _search_vector_store(self, search_text: str) -> List[Dict[str, Any]]:
+        """
+        Performs vector search using the provided text (original query or hypo-answer).
+        """
+        logging.info(f"Performing vector search...")
+        try:
+            # For HyDE, the hypothetical answer is rich and document-like.
             query_embedding = genai.embed_content(
                 model=self.embedding_model_name,
-                content=query_text,
-                task_type="RETRIEVAL_QUERY" # Use the specific task type for queries
+                content=search_text,
+                task_type="RETRIEVAL_DOCUMENT"
             )['embedding']
             
             results = self.collection.query(
@@ -79,6 +94,7 @@ class QueryMaster:
             return []
 
     def _rerank_documents(self, docs: List[Dict[str, Any]], query: str) -> List[Dict[str, Any]]:
+        # This function remains robust and unchanged
         logging.info(f"Re-ranking {len(docs)} documents for relevance...")
         if not docs: return []
         docs_str = "".join(f"Document {i+1}:\n{doc['text']}\n\n" for i, doc in enumerate(docs))
@@ -99,15 +115,16 @@ class QueryMaster:
             return docs[:self.config.RERANK_TOP_N]
 
     def _search_knowledge_graph(self, retrieved_docs: List[Dict[str, Any]]) -> str:
-        # This function logic remains the same
+        # This function remains unchanged
         return "Graph context temporarily disabled for focused testing."
 
     def answer_question(self, user_question: str) -> str:
         """
-        The main method to answer a user's question, now using the direct search strategy.
+        The main method to answer a user's question, now using the HyDE strategy again.
         """
-        # --- MODIFIED: Direct search without HyDE ---
-        initial_docs = self._search_vector_store(user_question)
+        # --- Reinstating HyDE ---
+        hypothetical_answer = self._generate_hypothetical_answer(user_question)
+        initial_docs = self._search_vector_store(hypothetical_answer)
         if not initial_docs:
             return "متاسفانه اطلاعات مرتبطی برای پاسخ به سوال شما در منابع موجود یافت نشد."
 
