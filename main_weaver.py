@@ -1,23 +1,18 @@
 # main_weaver.py
-# --- V5 FINAL ROBUST VERSION: Processing document chunk-by-chunk for entity extraction ---
+# --- PHASE 5 UPGRADE: This script now builds the QA vector store from enriched knowledge ---
 
 import os
 import sys
 import logging
-from typing import List, Dict, Any
+import json
+from pathlib import Path
 
 import google.generativeai as genai
 
-# Import project configurations and modules
 import config
-from src.knowledge_weaver.json_loader import load_processed_texts
-# --- KEY CHANGE: Import the text splitter ---
-from src.knowledge_weaver.text_splitter import split_text
-from src.knowledge_weaver.text_analyzer import load_prompt_template, analyze_text_for_entities
-from src.knowledge_weaver.graph_builder import build_knowledge_graph, save_graph
-from src.knowledge_weaver.vector_store import setup_chroma_collection
+# We no longer need the old text analysis and graph building here for the vector store
+from src.knowledge_weaver.vector_store import setup_qa_vector_store
 
-# --- 1. SETUP LOGGING ---
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -25,78 +20,46 @@ logging.basicConfig(
 )
 
 def main():
-    """Main function to orchestrate the entire knowledge weaving pipeline."""
+    """Main function to build the new QA-based vector store."""
     logging.info("=========================================================")
-    logging.info("    Project Danesh: Starting Phase 02 - Knowledge Weaver (Robust Version)    ")
+    logging.info("    Project Danesh: Starting Knowledge Weaver (Phase 5 - QA Vector Store)    ")
     logging.info("=========================================================")
 
-    # --- 2. CONFIGURE GEMINI API ---
+    # Configure Gemini API for embeddings
     try:
         api_key = os.getenv('GOOGLE_API_KEY')
         if not api_key:
-            logging.error("FATAL: 'GOOGLE_API_KEY' environment variable not set.")
-            sys.exit(1)
+            sys.exit("FATAL: 'GOOGLE_API_KEY' environment variable not set.")
         genai.configure(api_key=api_key)
-        text_model = genai.GenerativeModel(config.GEMINI_TEXT_MODEL_NAME)
-        logging.info("Successfully configured Google Gemini API.")
+        logging.info("Successfully configured Google Gemini API for embedding models.")
     except Exception as e:
-        logging.error(f"FATAL: Failed to configure Gemini API. Error: {e}")
-        sys.exit(1)
+        sys.exit(f"FATAL: Failed to configure Gemini API. Error: {e}")
 
-    # --- 3. CREATE DATA DIRECTORIES ---
-    config.KNOWLEDGE_GRAPH_DIR.mkdir(parents=True, exist_ok=True)
+    # Ensure necessary directories exist
     config.VECTOR_DB_DIR.mkdir(parents=True, exist_ok=True)
-    logging.info("Knowledge Weaver directories are ready.")
 
-    # --- 4. LOAD PROCESSED TEXT DATA ---
-    documents = load_processed_texts(config.PROCESSED_TEXT_DIR)
-    if not documents:
-        logging.info("No documents to process. Exiting.")
-        sys.exit(0)
+    # 1. Load the enriched knowledge pairs from the file created by the enhancer
+    knowledge_base_path = config.DRIVE_BASE_PATH / "knowledge_base" / "enriched_knowledge.json"
+    if not knowledge_base_path.exists():
+        sys.exit(f"FATAL: Enriched knowledge file not found at {knowledge_base_path}. Please run 'main_enhancer.py' first.")
 
-    # --- 5. CHUNK TEXTS AND EXTRACT STRUCTURED DATA (CHUNK-BY-CHUNK) ---
-    logging.info("--- Starting Text Analysis for Entity Extraction (Chunk-by-Chunk) ---")
-    prompt_template = load_prompt_template(config.ENTITY_EXTRACTION_PROMPT_PATH)
-    all_structured_data: List[Dict[str, Any]] = []
-    all_chunks_for_vector_store: List[str] = []
-    
-    # We now process each document individually
-    for doc in documents:
-        full_text = doc.get('full_text', '')
-        if not full_text.strip():
-            continue
+    try:
+        with open(knowledge_base_path, 'r', encoding='utf-8') as f:
+            knowledge_pairs = json.load(f)
+        logging.info(f"Successfully loaded {len(knowledge_pairs)} QA pairs from the knowledge base.")
+    except Exception as e:
+        sys.exit(f"Failed to load or parse the enriched knowledge file. Error: {e}")
 
-        # --- KEY CHANGE: First, split the document into manageable chunks ---
-        chunks = split_text(full_text)
-        all_chunks_for_vector_store.extend(chunks) # Collect chunks for vector store
-        logging.info(f"Document '{doc.get('source_filename')}' split into {len(chunks)} chunks.")
-
-        # --- KEY CHANGE: Then, analyze each chunk individually ---
-        for i, chunk in enumerate(chunks):
-            logging.info(f"  - Analyzing chunk {i+1}/{len(chunks)}...")
-            structured_data_chunk = analyze_text_for_entities(
-                chunk, text_model, prompt_template
-            )
-            if structured_data_chunk:
-                all_structured_data.append(structured_data_chunk)
-
-    if not all_structured_data:
-        logging.error("No structured data could be extracted from any chunk. Cannot build graph.")
-        # We can still proceed to build the vector store
-    else:
-        # --- 6. BUILD AND SAVE KNOWLEDGE GRAPH ---
-        knowledge_graph = build_knowledge_graph(all_structured_data)
-        save_graph(knowledge_graph, config.KNOWLEDGE_GRAPH_DIR)
-
-    # --- 7. SETUP VECTOR STORE AND EMBEDDINGS ---
-    # We now pass the original documents list which contains metadata,
-    # and the vector_store function will handle the chunking internally using the same logic.
-    setup_chroma_collection(
+    # 2. Setup the vector store using the new QA-based function
+    setup_qa_vector_store(
         db_path=config.VECTOR_DB_DIR,
         collection_name=config.CHROMA_COLLECTION_NAME,
-        documents=documents, # Pass the original documents
+        knowledge_pairs=knowledge_pairs,
         embedding_model_name=config.GEMINI_EMBEDDING_MODEL_NAME
     )
+
+    # Note: Graph building is now a separate concern. The primary goal of this script
+    # in Phase 5 is to build the high-accuracy QA vector store.
 
     logging.info("=========================================================")
     logging.info("    Project Danesh: Knowledge Weaver Phase Completed!     ")
