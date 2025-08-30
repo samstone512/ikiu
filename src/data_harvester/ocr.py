@@ -1,58 +1,43 @@
 # src/data_harvester/ocr.py
-# OPTIMIZATION-V4.2: Added safety settings to prevent premature truncation of the output.
+# --- FINAL VERSION: Using the robust and reliable Tesseract OCR engine ---
 
 import logging
-import time
 from pathlib import Path
-from typing import List
 from PIL import Image
-import google.generativeai as genai
-from google.generativeai.types import HarmCategory, HarmBlockThreshold
+import pytesseract
+import cv2
 
-# Import the specific prompt from our central config file
-from config import OCR_PROMPT
-
-def extract_text_from_document(image_paths: List[Path], model) -> str:
+def preprocess_image_for_ocr(image_path: Path):
     """
-    Performs OCR on a whole document by sending all its page images in a single request.
-    This allows the model to understand the context across pages, like reconstructing broken tables.
+    Improves image quality for better OCR results using OpenCV.
     """
-    if not image_paths:
-        logging.warning("No image paths provided to OCR function. Returning empty string.")
-        return ""
-
     try:
-        logging.info(f"  - Processing {len(image_paths)} pages for a single document...")
+        img = cv2.imread(str(image_path))
+        # Convert to grayscale
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # Apply thresholding to get a binary image
+        _, binary_img = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY)
+        return Image.fromarray(binary_img)
+    except Exception as e:
+        logging.warning(f"  - Could not preprocess image {image_path.name}. Using original. Error: {e}")
+        return Image.open(image_path)
+
+def extract_text_from_image_tesseract(image_path: Path) -> str:
+    """
+    Performs OCR on a single image file using the Tesseract engine.
+    """
+    try:
+        logging.info(f"  - Processing image with Tesseract: {image_path.name}")
         
-        request_content = [OCR_PROMPT]
-        for image_path in image_paths:
-            img = Image.open(image_path)
-            request_content.append(img)
-
-        # --- KEY CHANGE: Add safety settings to prevent the API from stopping early ---
-        safety_settings = {
-            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-        }
-
-        # Send the single, comprehensive request to the Gemini API with safety settings.
-        response = model.generate_content(
-            request_content,
-            safety_settings=safety_settings
-        )
-
-        time.sleep(2)
-
-        if response and response.text:
-            logging.info(f"  - Successfully extracted structured text from the entire document.")
-            return response.text.strip()
-        else:
-            # Added more detailed logging for when the response is empty
-            logging.warning(f"  - Gemini API returned an empty or blocked response. Prompt feedback: {response.prompt_feedback}")
-            return ""
+        # 1. Preprocess the image to improve quality
+        preprocessed_img = preprocess_image_for_ocr(image_path)
+        
+        # 2. Use Tesseract to extract text, specifying Persian language
+        text = pytesseract.image_to_string(preprocessed_img, lang='fas')
+        
+        logging.debug(f"Successfully extracted text from {image_path.name}.")
+        return text.strip()
 
     except Exception as e:
-        logging.error(f"  - An error occurred while processing the document. Error: {e}", exc_info=True)
+        logging.error(f"  - An error occurred while processing '{image_path.name}' with Tesseract. Error: {e}")
         return ""
