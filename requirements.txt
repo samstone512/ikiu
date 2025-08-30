@@ -1,11 +1,20 @@
-google-generativeai
-beautifulsoup4
-requests
+# requirements.txt
+
+# Core ML/AI Libraries
+torch
+transformers
+sentencepiece
+timm
+
+# PDF and Image Processing
+pypdfium2
 Pillow
-pdf2image
+
+# Graph and Data Handling
 networkx
-chromadb
-matplotlib
-gradio
-pytesseract
-opencv-python-headless
+pandas
+numpy
+
+# Utility and Logging
+tqdm
+python-dotenv
