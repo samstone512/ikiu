@@ -1,6 +1,5 @@
 # config.py
-# Centralized configuration file for Project Danesh.
-# --- PHASE 6: Adding parallel paths for the new Donut-based harvester ---
+# --- PHASE 6: Adding refinement prompt path ---
 
 from pathlib import Path
 
@@ -25,7 +24,7 @@ PROCESSED_TEXT_DIR_DONUT = DRIVE_BASE_PATH / "processed_text_donut"
 # --- Common Knowledge & Vector DB Directories ---
 KNOWLEDGE_GRAPH_DIR = DRIVE_BASE_PATH / "knowledge_graph"
 VECTOR_DB_DIR = DRIVE_BASE_PATH / "vector_db"
-KNOWLEDGE_BASE_DIR = DRIVE_BASE_PATH / "knowledge_base" # For enriched knowledge
+KNOWLEDGE_BASE_DIR = DRIVE_BASE_PATH / "knowledge_base"
 
 # --- API & MODEL CONFIGURATION ---
 GEMINI_VISION_MODEL_NAME = 'gemini-1.5-pro-latest'
@@ -34,10 +33,10 @@ GEMINI_EMBEDDING_MODEL_NAME = 'models/text-embedding-004'
 GEMINI_GENERATION_MODEL_NAME = 'gemini-1.5-flash'
 
 # --- PROMPT ENGINEERING ---
-# This is now a legacy prompt, kept for reference
-OCR_PROMPT = "Legacy OCR Prompt"
 ENTITY_EXTRACTION_PROMPT_PATH = PROMPTS_DIR / "entity_extraction.txt"
 RAG_PROMPT_PATH = PROMPTS_DIR / "rag_prompt.txt"
+# --- NEW: Path to the refinement prompt ---
+REFINEMENT_PROMPT_PATH = PROMPTS_DIR / "refinement_prompt.txt"
 
 # --- RAG PIPELINE CONFIGURATION ---
 CHROMA_COLLECTION_NAME = "ikiu_regulations"
