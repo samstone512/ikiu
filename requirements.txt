@@ -1,20 +1,12 @@
-# requirements.txt
-
-# Core ML/AI Libraries
-torch
-transformers
-sentencepiece
-timm
-
-# PDF and Image Processing
-pypdfium2
+google-generativeai
+beautifulsoup4
+requests
 Pillow
-
-# Graph and Data Handling
+pdf2image
 networkx
-pandas
-numpy
-
-# Utility and Logging
-tqdm
-python-dotenv
+chromadb
+matplotlib
+gradio
+transformers
+torch
+sentencepiece
