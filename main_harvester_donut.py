@@ -1,5 +1,5 @@
 # main_harvester_donut.py
-# --- PHASE 6: A dedicated runner for the Donut-based OCR pipeline ---
+# --- PHASE 6: Refactored to load prompts from files ---
 
 import os
 import sys
@@ -7,7 +7,6 @@ import json
 import logging
 from pathlib import Path
 
-# Add project root to path to allow importing modules
 project_root = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, project_root)
 
@@ -22,13 +21,42 @@ logging.basicConfig(
     stream=sys.stdout
 )
 
+# --- NEW: Function to load any prompt template from a file ---
+def load_prompt_template(prompt_path: Path) -> str:
+    """Reads the content of a prompt template file."""
+    try:
+        with open(prompt_path, 'r', encoding='utf-8') as f:
+            return f.read()
+    except FileNotFoundError:
+        logging.error(f"FATAL: Prompt file not found at {prompt_path}.")
+        raise
+    except Exception as e:
+        logging.error(f"FATAL: Could not read prompt file at {prompt_path}. Error: {e}")
+        raise
+
+def refine_text_with_llm(text: str, model: genai.GenerativeModel, prompt_template: str) -> str:
+    """Uses a generative model to clean and refine OCR'd text."""
+    if not text.strip():
+        return ""
+    logging.info("    - Refining OCR text with language model...")
+    try:
+        prompt = prompt_template.format(ocr_text=text)
+        response = model.generate_content(prompt)
+        logging.info("    - Text refinement successful.")
+        return response.text.strip()
+    except Exception as e:
+        logging.warning(f"    - Text refinement failed. Error: {e}. Returning original text.")
+        return text
+
 def main():
     """Main function to run the Donut-based data harvesting pipeline."""
     logging.info("======================================================")
     logging.info("    Project Danesh: Starting Harvester (V2 - Donut Model)    ")
     logging.info("======================================================")
-    
-    # Use the new, isolated directories for the Donut experiment
+
+    # --- NEW: Load the refinement prompt template at the beginning ---
+    refinement_prompt_template = load_prompt_template(config.REFINEMENT_PROMPT_PATH)
+
     images_dir = config.IMAGES_DIR_DONUT
     processed_text_dir = config.PROCESSED_TEXT_DIR_DONUT
     
@@ -42,8 +70,17 @@ def main():
         
     logging.info(f"Found {len(all_pdf_files)} PDF(s) to process.")
     
-    # Convert PDFs to images, saving them in the new 'images_donut' directory
     convert_pdfs_to_images(pdf_dir=config.RAW_PDFS_DIR, image_dir=images_dir)
+
+    # Initialize the Gemini model for the refinement step
+    try:
+        api_key = os.getenv('GOOGLE_API_KEY')
+        if not api_key: sys.exit("FATAL: 'GOOGLE_API_KEY' not set.")
+        genai.configure(api_key=api_key)
+        text_model = genai.GenerativeModel(config.GEMINI_TEXT_MODEL_NAME)
+        logging.info("Successfully configured Gemini API for text refinement.")
+    except Exception as e:
+        sys.exit(f"FATAL: Failed to configure Gemini API. Error: {e}")
 
     for pdf_path in all_pdf_files:
         try:
@@ -63,10 +100,11 @@ def main():
             all_pages_text = []
             for image_path in image_paths:
                 extracted_text = extract_text_with_donut(image_path)
-                all_pages_text.append(extracted_text)
+                # --- NEW: Refine text immediately after extraction ---
+                refined_text = refine_text_with_llm(extracted_text, text_model, refinement_prompt_template)
+                all_pages_text.append(refined_text)
 
             full_raw_text = "\n\n".join(all_pages_text)
-            # We still use the same preprocessor to clean up the final text
             cleaned_full_text = clean_document_text(full_raw_text)
 
             output_data = {
