@@ -1,7 +1,6 @@
 # run_harvester_v2.py
 
 import os
-import argparse
 from dotenv import load_dotenv
 from tqdm import tqdm
 import logging
@@ -14,9 +13,10 @@ import pypdfium2 as pdfium
 load_dotenv()
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# --- Constants ---
-INPUT_PDF_DIR = os.getenv("INPUT_PDF_DIR", "data/raw")
-OUTPUT_TEXT_DIR = os.getenv("OUTPUT_TEXT_DIR", "data/processed")
+# --- Constants (MODIFIED AS REQUESTED) ---
+# Hardcoded paths for simplicity in Google Colab
+INPUT_PDF_DIR = "/content/drive/MyDrive/IKIU/raw_pdfs"
+OUTPUT_TEXT_DIR = "/content/drive/MyDrive/IKIU/processed_text_v2"
 MODEL_NAME = "naver-clova-ix/donut-base-finetuned-docvqa" # A powerful model for document understanding
 
 # --- Main Harvester Logic ---
@@ -79,7 +79,7 @@ def run_harvester(pdf_dir, output_dir):
     It finds PDFs, converts them to images, and uses a VDU model to extract text.
     """
     logging.info("--- Starting Phase 6: Stability Master Harvester ---")
-    os.makedirs(output_dir, exist_ok=True)
+    os.makedirs(output_dir, exist_ok=True) # This line creates the directory if it doesn't exist
 
     processor, model, device = setup_model()
     
@@ -122,9 +122,5 @@ def run_harvester(pdf_dir, output_dir):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Run the new Data Harvester using a Visual Document Understanding model.")
-    parser.add_argument("--input_dir", type=str, default=INPUT_PDF_DIR, help="Directory containing raw PDF files.")
-    parser.add_argument("--output_dir", type=str, default=OUTPUT_TEXT_DIR, help="Directory to save the processed text files.")
-    args = parser.parse_args()
-
-    run_harvester(pdf_dir=args.input_dir, output_dir=args.output_dir)
+    # We directly call the function with our hardcoded paths
+    run_harvester(pdf_dir=INPUT_PDF_DIR, output_dir=OUTPUT_TEXT_DIR)
