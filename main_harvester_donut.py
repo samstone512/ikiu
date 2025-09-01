@@ -6,6 +6,7 @@ import sys
 import json
 import logging
 from pathlib import Path
+import google.generativeai as genai
 
 project_root = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, project_root)
