@@ -1,0 +1,23 @@
+
+2025-09-03 08:50:50,220 - INFO -   - Successfully extracted text from page_037.png
+2025-09-03 08:50:50,223 - INFO -     - Refining OCR text with language model...
+2025-09-03 08:50:50,462 - WARNING -     - Text refinement failed. Error: 403 Received http2 header with status: 403. Returning original text.
+
+
+025-09-03 08:50:45,385 - INFO -   - Successfully extracted text from page_036.png
+2025-09-03 08:50:45,387 - INFO -     - Refining OCR text with language model...
+2025-09-03 08:50:45,621 - WARNING -     - Text refinement failed. Error: 403 Received http2 header with status: 403. Returning original text.
+2025-09-03 08:50:45,621 - INFO -   - Processing image with Donut: page_037.png
+model.safetensors: 100%|████████████████████████████████████████████████████████████████████████████████████████| 806M/806M [02:52<00:00, 4.67MB/s]
+
+
+pytorch_model.bin: 100%|████████████████████████████████████████████████████████████████████████████████████████| 806M/806M [02:51<00:00, 4.64MB/s]
+Xet Storage is enabled for this repo, but the 'hf_xet' package is not installed. Falling back to regular HTTP download. For better performance, install the package with: `pip install huggingface_hub[hf_xet]` or `pip install hf_xet`
+2025-09-03 08:47:54,331 - WARNING - Xet Storage is enabled for this repo, but the 'hf_xet' package is not installed. Falling back to regular HTTP download. For better performance, install the package with: `pip install huggingface_hub[hf_xet]` or `pip install hf_xet`
+2025-09-03 08:47:54,802 - INFO - Donut model 'naver-clova-ix/donut-base-finetuned-cord-v2' loaded successfully and moved to cuda.
+2025-09-03 08:47:54,803 - INFO -   - Processing image with Donut: page_008.png
+model.safetensors:   0%|                                                                                                | 0.00/806M [00:00<?, ?B/s]The following generation flags are not valid and may be ignored: ['early_stopping']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+model.safetensors:   4%|███▍                                                                                   | 31.5M/806M [00:06<02:44, 4.72MB/s]2025-09-03 08:48:02,109 - INFO -   - Successfully extracted text from page_008.png
+2025-09-03 08:48:02,113 - INFO -     - Refining OCR text with language model...
+2025-09-03 08:48:03,623 - WARNING -     - Text refinement failed. Error: 403 Received http2 header with status: 403. Returning original text.
+2025-09-03 08:48:03,623 - INFO -   - Processing image with Donut: page_009.png

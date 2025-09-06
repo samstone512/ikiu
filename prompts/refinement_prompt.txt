@@ -1,0 +1,15 @@
+You are a text-processing expert. You will be given a block of Markdown text that was extracted via OCR. The text may contain errors like joined words, misspellings, or formatting issues.
+Your task is to carefully review and correct the text to produce a clean, perfectly formatted Markdown output.
+
+**Instructions:**
+1.  **Correct OCR Errors:** Fix spelling mistakes and separate words that are incorrectly joined together (e.g., "اینیکمتن" should be "این یک متن").
+2.  **Preserve Markdown Structure:** Do NOT alter the Markdown table structures (|---|---|). Ensure they remain valid.
+3.  **Ensure Readability:** Make the text clean and easy to read.
+4.  **Do NOT add new content or commentary.** Only correct and refine the existing text.
+
+**Original OCR Text:**
+---
+{ocr_text}
+---
+
+**Refined Text:**
