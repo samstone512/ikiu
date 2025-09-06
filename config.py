@@ -1,51 +1,38 @@
-# config.py
-# --- MODIFIED FOR LOCAL EXECUTION ---
-
+import os
 from pathlib import Path
 
-# --- Base Paths ---
-# آدرس ریشه پروژه شما
-PROJECT_ROOT = Path(__file__).parent.resolve()
+class Config:
+    # Project Root Directory
+    ROOT_DIR = Path(__file__).parent
 
-# --- NEW: Base path for all our local data ---
-# تمام داده‌های پروژه در این پوشه ذخیره خواهند شد
-DATA_BASE_PATH = PROJECT_ROOT / "data"
+    # Data Directories
+    DATA_DIR = ROOT_DIR / 'data'
+    PDF_DIR = DATA_DIR / 'pdf'
+    TEXT_DIR = DATA_DIR / 'text'
+    JSON_DIR = DATA_DIR / 'json'
+    DONUT_OUTPUT_DIR = DATA_DIR / 'donut_output'
+    DOCLING_OUTPUT_DIR = DATA_DIR / 'docling_output' # New directory for Docling JSON outputs
 
-# --- Project-Relative Directories (Located in the Git Repo) ---
-PROMPTS_DIR = PROJECT_ROOT / "prompts"
+    # Ensure directories exist
+    @staticmethod
+    def create_dirs():
+        for dir_path in [
+            Config.DATA_DIR,
+            Config.PDF_DIR,
+            Config.TEXT_DIR,
+            Config.JSON_DIR,
+            Config.DONUT_OUTPUT_DIR,
+            Config.DOCLING_OUTPUT_DIR # Ensure the new directory is created
+        ]:
+            os.makedirs(dir_path, exist_ok=True)
 
-# --- Local Data Directories (Located in D:\ProjectDanesh\data) ---
-RAW_PDFS_DIR = DATA_BASE_PATH / "raw_pdfs"
+# Automatically create directories when this module is imported
+Config.create_dirs()
 
-# --- V1 (Original) Data Directories ---
-IMAGES_DIR = DATA_BASE_PATH / "images"
-PROCESSED_TEXT_DIR = DATA_BASE_PATH / "processed_text"
-
-# --- V2 (Donut Experiment) Data Directories ---
-IMAGES_DIR_DONUT = DATA_BASE_PATH / "images_donut"
-PROCESSED_TEXT_DIR_DONUT = DATA_BASE_PATH / "processed_text_donut"
-
-# --- Common Knowledge & Vector DB Directories ---
-KNOWLEDGE_GRAPH_DIR = DATA_BASE_PATH / "knowledge_graph"
-VECTOR_DB_DIR = DATA_BASE_PATH / "vector_db"
-KNOWLEDGE_BASE_DIR = DATA_BASE_PATH / "knowledge_base"
-
-# --- NEW: Directory for optimization data ---
-OPTIMIZATION_DATA_DIR = DATA_BASE_PATH / "optimization_data"
-
-
-# --- API & MODEL CONFIGURATION ---
-GEMINI_VISION_MODEL_NAME = 'gemini-1.5-pro-latest'
-GEMINI_TEXT_MODEL_NAME = 'gemini-1.5-flash'
-GEMINI_EMBEDDING_MODEL_NAME = 'models/text-embedding-004'
-GEMINI_GENERATION_MODEL_NAME = 'gemini-1.5-flash'
-
-# --- PROMPT ENGINEERING ---
-ENTITY_EXTRACTION_PROMPT_PATH = PROMPTS_DIR / "entity_extraction.txt"
-RAG_PROMPT_PATH = PROMPTS_DIR / "rag_prompt.txt"
-REFINEMENT_PROMPT_PATH = PROMPTS_DIR / "refinement_prompt.txt"
-
-# --- RAG PIPELINE CONFIGURATION ---
-CHROMA_COLLECTION_NAME = "ikiu_regulations"
-VECTOR_SEARCH_TOP_K = 10
-RERANK_TOP_N = 3
+if __name__ == '__main__':
+    # You can run this file directly to see the configured paths
+    print(f"Project Root: {Config.ROOT_DIR}")
+    print(f"Data Directory: {Config.DATA_DIR}")
+    print(f"PDF Directory: {Config.PDF_DIR}")
+    print(f"Docling Output Directory: {Config.DOCLING_OUTPUT_DIR}")
+    print("All necessary directories have been checked/created.")
