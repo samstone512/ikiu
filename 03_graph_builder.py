@@ -19,6 +19,7 @@ ROOT_DIR = Path(__file__).parent
 OUTPUT_DIR = ROOT_DIR / "03_output"
 KNOWLEDGE_CHUNK_PATH = OUTPUT_DIR / "knowledge_chunks.pkl"
 GRAPH_IMAGE_PATH = OUTPUT_DIR / "knowledge_graph.png"
+GRAPH_DATA_PATH = OUTPUT_DIR / "graph_data.pkl" # <<< NEW: Path to save graph data
 
 # --- Data Structure Definitions ---
 @dataclass
@@ -32,7 +33,7 @@ class EntityNode:
     text: str
     type: str
 
-# --- Text Cleaning Function ---
+# --- Functions (Unchanged) ---
 def clean_text_final(text: str) -> str:
     if not isinstance(text, str): return ""
     text = unicodedata.normalize('NFKC', text)
@@ -41,7 +42,6 @@ def clean_text_final(text: str) -> str:
     text = re.sub(r'\s+', ' ', text).strip()
     return text
 
-# --- Core Data Extraction Logic ---
 def load_knowledge_chunks(file_path: Path) -> Optional[List[KnowledgeChunk]]:
     if not file_path.exists(): return None
     with open(file_path, 'rb') as f: return pickle.load(f)
@@ -67,52 +67,37 @@ def extract_relations(chunks: List[KnowledgeChunk], ner_pipeline: pipeline) -> T
         except Exception: continue
     return all_nodes, all_edges
 
-# --- Graph Visualization Logic ---
 def visualize_graph(nodes: Set[EntityNode], edges: Set[Tuple[EntityNode, EntityNode]], output_path: Path):
-    """Creates and saves a visual representation of the knowledge graph."""
-    logging.info("Starting graph visualization...")
-    
+    # This function remains the same, no changes needed here.
     user_font_path = "D:/Software/font/F/Tahoma.ttf" 
-
     G = nx.Graph()
     labels = {}
-    for node in nodes:
-        G.add_node(node.text)
-        labels[node.text] = node.text
-    for node1, node2 in edges:
-        G.add_edge(node1.text, node2.text)
-
-    # --- Font Handling for Persian Labels ---
-    font_prop = None
-    try:
-        font_prop = fm.FontProperties(fname=user_font_path)
-        logging.info(f"Using specified font: {user_font_path}")
-    except Exception as e:
-        logging.error(f"Could not load the specified font. Error: {e}")
-        logging.warning("Persian labels may not render correctly.")
-    
-    # --- Drawing the Graph ---
+    for node in nodes: G.add_node(node.text); labels[node.text] = node.text
+    for node1, node2 in edges: G.add_edge(node1.text, node2.text)
+    font_prop = fm.FontProperties(fname=user_font_path)
     plt.figure(figsize=(20, 20))
     pos = nx.spring_layout(G, k=0.9, iterations=50)
     nx.draw_networkx_nodes(G, pos, node_color='skyblue', node_size=2000)
     nx.draw_networkx_edges(G, pos, alpha=0.5, edge_color='gray')
-    
-    # === THE FIX IS HERE ===
-    # Using 'font_family' instead of 'font_properties'
-    nx.draw_networkx_labels(G, pos, labels=labels, font_size=10, font_family=font_prop.get_name() if font_prop else None)
-    
+    nx.draw_networkx_labels(G, pos, labels=labels, font_size=10, font_family=font_prop.get_name())
     plt.title("Knowledge Graph Visualization", size=20)
     plt.axis('off')
-    
+    plt.savefig(output_path, format="PNG", dpi=300)
+    logging.info(f"Graph visualization saved successfully to: {output_path}")
+
+# --- NEW: Function to save graph data ---
+def save_graph_data(nodes: Set[EntityNode], edges: Set[Tuple[EntityNode, EntityNode]], file_path: Path):
+    """Saves the graph nodes and edges to a pickle file."""
     try:
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        plt.savefig(output_path, format="PNG", dpi=300)
-        logging.info(f"Graph visualization saved successfully to: {output_path}")
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(file_path, 'wb') as f:
+            pickle.dump({'nodes': nodes, 'edges': edges}, f)
+        logging.info(f"Successfully saved graph data ({len(nodes)} nodes, {len(edges)} edges) to: {file_path}")
     except Exception as e:
-        logging.error(f"Failed to save graph image: {e}")
+        logging.error(f"Failed to save graph data: {e}", exc_info=True)
 
 def main():
-    logging.info("--- Starting Phase 08: Graph Builder (Final Run with Visualization) ---")
+    logging.info("--- Starting Phase 08: Graph Builder (Final Run with Data Persistence) ---")
     
     knowledge_chunks = load_knowledge_chunks(KNOWLEDGE_CHUNK_PATH)
     if not knowledge_chunks: return
@@ -124,8 +109,10 @@ def main():
 
     if graph_nodes and graph_edges:
         visualize_graph(graph_nodes, graph_edges, GRAPH_IMAGE_PATH)
+        save_graph_data(graph_nodes, graph_edges, GRAPH_DATA_PATH) # <<< NEW: Saving the data
 
     logging.info("\n--- Phase 08: GraphBuilder Complete ---")
+
 
 if __name__ == "__main__":
     main()
