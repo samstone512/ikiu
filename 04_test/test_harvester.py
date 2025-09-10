@@ -70,7 +70,7 @@ if __name__ == "__main__":
     
     # --- MODIFICATION ---
     # We are now targeting a single, specific file for focused analysis.
-    target_pdf_name = "shivename.pdf"
+    target_pdf_name = "shivename.pdf" #########################################################################
     
     # Construct the full path to the target file
     pdf_to_process = Config.PDF_DIR / target_pdf_name
