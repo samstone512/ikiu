@@ -1,0 +1,1842 @@
+{
+  "schema_name": "DoclingDocument",
+  "version": "1.6.0",
+  "name": "shivename",
+  "origin": {
+    "mimetype": "application/pdf",
+    "binary_hash": 5339727843716070106,
+    "filename": "shivename.pdf",
+    "uri": null
+  },
+  "furniture": {
+    "self_ref": "#/furniture",
+    "parent": null,
+    "children": [],
+    "content_layer": "furniture",
+    "name": "_root_",
+    "label": "unspecified"
+  },
+  "body": {
+    "self_ref": "#/body",
+    "parent": null,
+    "children": [
+      {
+        "cref": "#/texts/0"
+      },
+      {
+        "cref": "#/pictures/0"
+      },
+      {
+        "cref": "#/texts/1"
+      },
+      {
+        "cref": "#/texts/2"
+      },
+      {
+        "cref": "#/texts/3"
+      },
+      {
+        "cref": "#/texts/4"
+      },
+      {
+        "cref": "#/texts/5"
+      },
+      {
+        "cref": "#/texts/6"
+      },
+      {
+        "cref": "#/texts/7"
+      },
+      {
+        "cref": "#/texts/8"
+      },
+      {
+        "cref": "#/texts/9"
+      },
+      {
+        "cref": "#/texts/10"
+      },
+      {
+        "cref": "#/texts/11"
+      },
+      {
+        "cref": "#/texts/12"
+      },
+      {
+        "cref": "#/texts/13"
+      },
+      {
+        "cref": "#/groups/0"
+      },
+      {
+        "cref": "#/texts/20"
+      },
+      {
+        "cref": "#/texts/21"
+      },
+      {
+        "cref": "#/texts/22"
+      },
+      {
+        "cref": "#/groups/1"
+      },
+      {
+        "cref": "#/texts/27"
+      },
+      {
+        "cref": "#/texts/28"
+      },
+      {
+        "cref": "#/texts/29"
+      },
+      {
+        "cref": "#/texts/30"
+      },
+      {
+        "cref": "#/texts/31"
+      },
+      {
+        "cref": "#/texts/32"
+      },
+      {
+        "cref": "#/texts/33"
+      },
+      {
+        "cref": "#/groups/2"
+      },
+      {
+        "cref": "#/texts/35"
+      },
+      {
+        "cref": "#/texts/36"
+      },
+      {
+        "cref": "#/groups/3"
+      },
+      {
+        "cref": "#/texts/44"
+      },
+      {
+        "cref": "#/texts/45"
+      },
+      {
+        "cref": "#/texts/46"
+      },
+      {
+        "cref": "#/texts/47"
+      },
+      {
+        "cref": "#/texts/48"
+      },
+      {
+        "cref": "#/texts/49"
+      },
+      {
+        "cref": "#/texts/50"
+      }
+    ],
+    "content_layer": "body",
+    "name": "_root_",
+    "label": "unspecified"
+  },
+  "groups": [
+    {
+      "self_ref": "#/groups/0",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [
+        {
+          "cref": "#/texts/14"
+        },
+        {
+          "cref": "#/texts/15"
+        },
+        {
+          "cref": "#/texts/16"
+        },
+        {
+          "cref": "#/texts/17"
+        },
+        {
+          "cref": "#/texts/18"
+        },
+        {
+          "cref": "#/texts/19"
+        }
+      ],
+      "content_layer": "body",
+      "name": "list",
+      "label": "list"
+    },
+    {
+      "self_ref": "#/groups/1",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [
+        {
+          "cref": "#/texts/23"
+        },
+        {
+          "cref": "#/texts/24"
+        },
+        {
+          "cref": "#/texts/25"
+        },
+        {
+          "cref": "#/texts/26"
+        }
+      ],
+      "content_layer": "body",
+      "name": "list",
+      "label": "list"
+    },
+    {
+      "self_ref": "#/groups/2",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [
+        {
+          "cref": "#/texts/34"
+        }
+      ],
+      "content_layer": "body",
+      "name": "list",
+      "label": "list"
+    },
+    {
+      "self_ref": "#/groups/3",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [
+        {
+          "cref": "#/texts/37"
+        },
+        {
+          "cref": "#/texts/38"
+        },
+        {
+          "cref": "#/texts/39"
+        },
+        {
+          "cref": "#/texts/40"
+        },
+        {
+          "cref": "#/texts/41"
+        },
+        {
+          "cref": "#/texts/42"
+        },
+        {
+          "cref": "#/texts/43"
+        }
+      ],
+      "content_layer": "body",
+      "name": "list",
+      "label": "list"
+    }
+  ],
+  "texts": [
+    {
+      "self_ref": "#/texts/0",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "section_header",
+      "prov": [
+        {
+          "page_no": 1,
+          "bbox": {
+            "l": 264.17,
+            "t": 753.9610439453126,
+            "r": 323.756,
+            "b": 741.3680439453126,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            11
+          ]
+        }
+      ],
+      "orig": "باسمه تعالی",
+      "text": "باسمه تعالی",
+      "formatting": null,
+      "hyperlink": null,
+      "level": 1
+    },
+    {
+      "self_ref": "#/texts/1",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "section_header",
+      "prov": [
+        {
+          "page_no": 1,
+          "bbox": {
+            "l": 179.81,
+            "t": 580.5867106119792,
+            "r": 465.3333333333333,
+            "b": 503.61304394531254,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            30
+          ]
+        }
+      ],
+      "orig": "های پژوهشی دانشگاه ٥ نام تشويق",
+      "text": "های پژوهشی دانشگاه ٥ نام تشويق",
+      "formatting": null,
+      "hyperlink": null,
+      "level": 1
+    },
+    {
+      "self_ref": "#/texts/2",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "text",
+      "prov": [
+        {
+          "page_no": 1,
+          "bbox": {
+            "l": 329.566,
+            "t": 428.90604394531255,
+            "r": 474.994,
+            "b": 388.98304394531255,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            89
+          ]
+        }
+      ],
+      "orig": "تاریخ تصویب در شورای پژوهشی: تاریخ تصویب در هیأت رییسه: تاریخ تصویب در هیأت امنای دانشگاه",
+      "text": "تاریخ تصویب در شورای پژوهشی: تاریخ تصویب در هیأت رییسه: تاریخ تصویب در هیأت امنای دانشگاه",
+      "formatting": null,
+      "hyperlink": null
+    },
+    {
+      "self_ref": "#/texts/3",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "text",
+      "prov": [
+        {
+          "page_no": 1,
+          "bbox": {
+            "l": 131.66,
+            "t": 429.17004394531256,
+            "r": 439.024,
+            "b": 374.0900439453125,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            46
+          ]
+        }
+      ],
+      "orig": "27 / 03 / 1402 30 / 03 / 1402 : 28 / 04 / 1402",
+      "text": "27 / 03 / 1402 30 / 03 / 1402 : 28 / 04 / 1402",
+      "formatting": null,
+      "hyperlink": null
+    },
+    {
+      "self_ref": "#/texts/4",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "section_header",
+      "prov": [
+        {
+          "page_no": 1,
+          "bbox": {
+            "l": 207.3416119106864,
+            "t": 240.58671061197913,
+            "r": 389.66666666666663,
+            "b": 193.9150439453125,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            46
+          ]
+        }
+      ],
+      "orig": "مصوب هیأت امنای دانشگاه 9 معاونت پژوهشی فناوری",
+      "text": "مصوب هیأت امنای دانشگاه 9 معاونت پژوهشی فناوری",
+      "formatting": null,
+      "hyperlink": null,
+      "level": 1
+    },
+    {
+      "self_ref": "#/texts/5",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "furniture",
+      "label": "page_header",
+      "prov": [
+        {
+          "page_no": 2,
+          "bbox": {
+            "l": 317.95,
+            "t": 804.4110439453125,
+            "r": 524.638,
+            "b": 795.4770439453125,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            55
+          ]
+        }
+      ],
+      "orig": "شیوه نامهی تشویق پدیدآورندگان فعالیت های پژوهشی دانشگاه",
+      "text": "شیوه نامهی تشویق پدیدآورندگان فعالیت های پژوهشی دانشگاه",
+      "formatting": null,
+      "hyperlink": null
+    },
+    {
+      "self_ref": "#/texts/6",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "section_header",
+      "prov": [
+        {
+          "page_no": 2,
+          "bbox": {
+            "l": 492.46,
+            "t": 754.1350439453125,
+            "r": 524.585,
+            "b": 742.5110439453125,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            5
+          ]
+        }
+      ],
+      "orig": "مقدمه",
+      "text": "مقدمه",
+      "formatting": null,
+      "hyperlink": null,
+      "level": 1
+    },
+    {
+      "self_ref": "#/texts/7",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "text",
+      "prov": [
+        {
+          "page_no": 2,
+          "bbox": {
+            "l": 67.344,
+            "t": 739.1350439453125,
+            "r": 524.606,
+            "b": 697.6310439453125,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            272
+          ]
+        }
+      ],
+      "orig": "به منظور تشویق اعضای هیأت علمی و دانشجویان دانشگاه به انجام فعالیت های پژوهشی مؤثر و با کیفیت و با هدف   پشتیبانی از تحقیق و پژوهش و همچنین   در جهت ارتقای جایگاه ملی و بین المللی دانشگاه   بین المللی ) امام خمینی(ره ، شیوه  نامهی حاضر،   به شرح زیر، تدوین و اجرا می شود .",
+      "text": "به منظور تشویق اعضای هیأت علمی و دانشجویان دانشگاه به انجام فعالیت های پژوهشی مؤثر و با کیفیت و با هدف   پشتیبانی از تحقیق و پژوهش و همچنین   در جهت ارتقای جایگاه ملی و بین المللی دانشگاه   بین المللی ) امام خمینی(ره ، شیوه  نامهی حاضر،   به شرح زیر، تدوین و اجرا می شود .",
+      "formatting": null,
+      "hyperlink": null
+    },
+    {
+      "self_ref": "#/texts/8",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "section_header",
+      "prov": [
+        {
+          "page_no": 2,
+          "bbox": {
+            "l": 443.14,
+            "t": 664.5400439453125,
+            "r": 524.603,
+            "b": 651.5800439453126,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            16
+          ]
+        }
+      ],
+      "orig": "مادهی 1 ) تعاریف",
+      "text": "مادهی 1 ) تعاریف",
+      "formatting": null,
+      "hyperlink": null,
+      "level": 1
+    },
+    {
+      "self_ref": "#/texts/9",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "text",
+      "prov": [
+        {
+          "page_no": 2,
+          "bbox": {
+            "l": 67.344,
+            "t": 648.7000439453126,
+            "r": 524.591,
+            "b": 558.1900439453126,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            461
+          ]
+        }
+      ],
+      "orig": "1 -1 : ) دانشگاه منظور دانشگاه بینالمللی امام خمینی(ره) . است 2 -1 ) امتیاز : منظور امتیاز شیوه نامه امتیازدهی به فعالیت های پژوهشی « ی است که کمیته منتخب بر اساس مورد استفاده در امور پژوهشی دانشگاه به یک فعالیت پژوهشی اختصاص می دهد » . 3 -1 ) / متقاضی پدیدآورنده: پژوهشگری که در تولید فعالیت پژوهشی نقش داشته و نامش بر روی آن درج شده . و متقاضی دریافت مبلغ تشویقی است 4 -1 ) نشانی: وابستگی سازمانی یا نشانی . پستی پدیدآورنده که بر روی فعالیت پژوهشی درج شده است",
+      "text": "1 -1 : ) دانشگاه منظور دانشگاه بینالمللی امام خمینی(ره) . است 2 -1 ) امتیاز : منظور امتیاز شیوه نامه امتیازدهی به فعالیت های پژوهشی « ی است که کمیته منتخب بر اساس مورد استفاده در امور پژوهشی دانشگاه به یک فعالیت پژوهشی اختصاص می دهد » . 3 -1 ) / متقاضی پدیدآورنده: پژوهشگری که در تولید فعالیت پژوهشی نقش داشته و نامش بر روی آن درج شده . و متقاضی دریافت مبلغ تشویقی است 4 -1 ) نشانی: وابستگی سازمانی یا نشانی . پستی پدیدآورنده که بر روی فعالیت پژوهشی درج شده است",
+      "formatting": null,
+      "hyperlink": null
+    },
+    {
+      "self_ref": "#/texts/10",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "section_header",
+      "prov": [
+        {
+          "page_no": 2,
+          "bbox": {
+            "l": 382.39,
+            "t": 525.3100439453125,
+            "r": 524.603,
+            "b": 512.3500439453126,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            28
+          ]
+        }
+      ],
+      "orig": "مادهی 2 ) پدیدآورندگان مشمول",
+      "text": "مادهی 2 ) پدیدآورندگان مشمول",
+      "formatting": null,
+      "hyperlink": null,
+      "level": 1
+    },
+    {
+      "self_ref": "#/texts/11",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "text",
+      "prov": [
+        {
+          "page_no": 2,
+          "bbox": {
+            "l": 97.464,
+            "t": 509.47004394531257,
+            "r": 524.591,
+            "b": 480.67004394531256,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            179
+          ]
+        }
+      ],
+      "orig": "1 -2 ) اعضای هیأت علمی ) دانشگاه بین المللی امام خمینی (ره اعم از رسمی، پیمانی، طرح سربازی 2 -2 ) دانشجویان دانشگاه بین المللی امام خمینی (ره) اعم از مشغول به تحصیل یا دانش آموخته",
+      "text": "1 -2 ) اعضای هیأت علمی ) دانشگاه بین المللی امام خمینی (ره اعم از رسمی، پیمانی، طرح سربازی 2 -2 ) دانشجویان دانشگاه بین المللی امام خمینی (ره) اعم از مشغول به تحصیل یا دانش آموخته",
+      "formatting": null,
+      "hyperlink": null
+    },
+    {
+      "self_ref": "#/texts/12",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "section_header",
+      "prov": [
+        {
+          "page_no": 2,
+          "bbox": {
+            "l": 355.39,
+            "t": 462.79004394531256,
+            "r": 524.603,
+            "b": 449.8300439453125,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            33
+          ]
+        }
+      ],
+      "orig": "مادهی 3 ) فعالیت های پژوهشی مشمول",
+      "text": "مادهی 3 ) فعالیت های پژوهشی مشمول",
+      "formatting": null,
+      "hyperlink": null,
+      "level": 1
+    },
+    {
+      "self_ref": "#/texts/13",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "text",
+      "prov": [
+        {
+          "page_no": 2,
+          "bbox": {
+            "l": 256.73,
+            "t": 446.95004394531253,
+            "r": 524.591,
+            "b": 433.99004394531255,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            59
+          ]
+        }
+      ],
+      "orig": "1 -3 ) فعالیت های پژوهشی مشمول شیوه نامه تشویق : عبارتند از",
+      "text": "1 -3 ) فعالیت های پژوهشی مشمول شیوه نامه تشویق : عبارتند از",
+      "formatting": null,
+      "hyperlink": null
+    },
+    {
+      "self_ref": "#/texts/14",
+      "parent": {
+        "cref": "#/groups/0"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "list_item",
+      "prov": [
+        {
+          "page_no": 2,
+          "bbox": {
+            "l": 163.58,
+            "t": 430.92504394531255,
+            "r": 496.151,
+            "b": 418.30504394531255,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            64
+          ]
+        }
+      ],
+      "orig": "-مقاله های علمی - پژوهشی منتشر شده در نشریات معتبر داخلی و خارجی",
+      "text": "-مقاله های علمی - پژوهشی منتشر شده در نشریات معتبر داخلی و خارجی",
+      "formatting": null,
+      "hyperlink": null,
+      "enumerated": false,
+      "marker": ""
+    },
+    {
+      "self_ref": "#/texts/15",
+      "parent": {
+        "cref": "#/groups/0"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "list_item",
+      "prov": [
+        {
+          "page_no": 2,
+          "bbox": {
+            "l": 140.78,
+            "t": 415.92504394531255,
+            "r": 496.151,
+            "b": 403.30504394531255,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            69
+          ]
+        }
+      ],
+      "orig": "-مقاله های علمی - مروری منتشر شده در نشریات معتبر داخلی و خارجی معتبر",
+      "text": "-مقاله های علمی - مروری منتشر شده در نشریات معتبر داخلی و خارجی معتبر",
+      "formatting": null,
+      "hyperlink": null,
+      "enumerated": false,
+      "marker": ""
+    },
+    {
+      "self_ref": "#/texts/16",
+      "parent": {
+        "cref": "#/groups/0"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "list_item",
+      "prov": [
+        {
+          "page_no": 2,
+          "bbox": {
+            "l": 209.81,
+            "t": 401.04504394531256,
+            "r": 496.151,
+            "b": 388.42504394531255,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            56
+          ]
+        }
+      ],
+      "orig": "-مقاله های علمی - ترویجی منتشر شده در نشریات معتبر داخلی",
+      "text": "-مقاله های علمی - ترویجی منتشر شده در نشریات معتبر داخلی",
+      "formatting": null,
+      "hyperlink": null,
+      "enumerated": false,
+      "marker": ""
+    },
+    {
+      "self_ref": "#/texts/17",
+      "parent": {
+        "cref": "#/groups/0"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "list_item",
+      "prov": [
+        {
+          "page_no": 2,
+          "bbox": {
+            "l": 172.1,
+            "t": 386.04504394531256,
+            "r": 496.151,
+            "b": 373.42504394531255,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            65
+          ]
+        }
+      ],
+      "orig": "-اختراع، اکتشاف، تولید دانش فنی، ثبت مالکیت فکری و تعیین توالی ژن",
+      "text": "-اختراع، اکتشاف، تولید دانش فنی، ثبت مالکیت فکری و تعیین توالی ژن",
+      "formatting": null,
+      "hyperlink": null,
+      "enumerated": false,
+      "marker": ""
+    },
+    {
+      "self_ref": "#/texts/18",
+      "parent": {
+        "cref": "#/groups/0"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "list_item",
+      "prov": [
+        {
+          "page_no": 2,
+          "bbox": {
+            "l": 303.79,
+            "t": 371.16504394531256,
+            "r": 496.151,
+            "b": 358.54504394531256,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            39
+          ]
+        }
+      ],
+      "orig": "-اثر بدیع و ارزنده هنری یا ادبی و فلسفی",
+      "text": "-اثر بدیع و ارزنده هنری یا ادبی و فلسفی",
+      "formatting": null,
+      "hyperlink": null,
+      "enumerated": false,
+      "marker": ""
+    },
+    {
+      "self_ref": "#/texts/19",
+      "parent": {
+        "cref": "#/groups/0"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "list_item",
+      "prov": [
+        {
+          "page_no": 2,
+          "bbox": {
+            "l": 246.41,
+            "t": 356.16504394531256,
+            "r": 496.151,
+            "b": 343.54504394531256,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            50
+          ]
+        }
+      ],
+      "orig": "-تألیف و تصنیف کتاب یا بخش  ی از کتاب و ترجمه کتاب",
+      "text": "-تألیف و تصنیف کتاب یا بخش  ی از کتاب و ترجمه کتاب",
+      "formatting": null,
+      "hyperlink": null,
+      "enumerated": false,
+      "marker": ""
+    },
+    {
+      "self_ref": "#/texts/20",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "text",
+      "prov": [
+        {
+          "page_no": 2,
+          "bbox": {
+            "l": 67.344,
+            "t": 341.3300439453125,
+            "r": 524.644,
+            "b": 313.70104394531256,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            119
+          ]
+        }
+      ],
+      "orig": "تبصره 1 ) فعالیت های پژوهشی باید در کمیته منتخب دانشکده امتیازدهی شده و امتیاز آنها به تأیید پژوهش . دانشگاه رسیده باشد",
+      "text": "تبصره 1 ) فعالیت های پژوهشی باید در کمیته منتخب دانشکده امتیازدهی شده و امتیاز آنها به تأیید پژوهش . دانشگاه رسیده باشد",
+      "formatting": null,
+      "hyperlink": null
+    },
+    {
+      "self_ref": "#/texts/21",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "section_header",
+      "prov": [
+        {
+          "page_no": 2,
+          "bbox": {
+            "l": 342.55,
+            "t": 295.61004394531255,
+            "r": 524.603,
+            "b": 282.6500439453125,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            35
+          ]
+        }
+      ],
+      "orig": "مادهی 4 ) شرایط فعالیت پژوهشی مشمول",
+      "text": "مادهی 4 ) شرایط فعالیت پژوهشی مشمول",
+      "formatting": null,
+      "hyperlink": null,
+      "level": 1
+    },
+    {
+      "self_ref": "#/texts/22",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "text",
+      "prov": [
+        {
+          "page_no": 2,
+          "bbox": {
+            "l": 67.344,
+            "t": 279.6500439453125,
+            "r": 524.629,
+            "b": 252.11104394531253,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            108
+          ]
+        }
+      ],
+      "orig": "1 -4 ) متقاضی باید نشانی دانشگاه را دقیقا ً  مطابق یکی از عبارت های زیر، به عنوان نشانی خود درج نموده باشد :",
+      "text": "1 -4 ) متقاضی باید نشانی دانشگاه را دقیقا ً  مطابق یکی از عبارت های زیر، به عنوان نشانی خود درج نموده باشد :",
+      "formatting": null,
+      "hyperlink": null
+    },
+    {
+      "self_ref": "#/texts/23",
+      "parent": {
+        "cref": "#/groups/1"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "list_item",
+      "prov": [
+        {
+          "page_no": 2,
+          "bbox": {
+            "l": 309.67,
+            "t": 247.89504394531252,
+            "r": 496.382,
+            "b": 236.2710439453125,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            43
+          ]
+        }
+      ],
+      "orig": "· فارسی: دانشگاه بین ) المللی امام خمینی(ره",
+      "text": "فارسی: دانشگاه بین ) المللی امام خمینی(ره",
+      "formatting": null,
+      "hyperlink": null,
+      "enumerated": false,
+      "marker": "·"
+    },
+    {
+      "self_ref": "#/texts/24",
+      "parent": {
+        "cref": "#/groups/1"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "list_item",
+      "prov": [
+        {
+          "page_no": 2,
+          "bbox": {
+            "l": 230.81,
+            "t": 232.34004394531257,
+            "r": 496.382,
+            "b": 219.38004394531254,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            50
+          ]
+        }
+      ],
+      "orig": "· : انگلیسی Imam Khomeini International University",
+      "text": ": انگلیسی Imam Khomeini International University",
+      "formatting": null,
+      "hyperlink": null,
+      "enumerated": false,
+      "marker": "·"
+    },
+    {
+      "self_ref": "#/texts/25",
+      "parent": {
+        "cref": "#/groups/1"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "list_item",
+      "prov": [
+        {
+          "page_no": 2,
+          "bbox": {
+            "l": 323.11,
+            "t": 216.82304394531252,
+            "r": 496.382,
+            "b": 203.87104394531252,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            42
+          ]
+        }
+      ],
+      "orig": "· : عربی جامعة الإمام الخمیني (ره) الدولیة",
+      "text": ": عربی جامعة الإمام الخمیني (ره) الدولیة",
+      "formatting": null,
+      "hyperlink": null,
+      "enumerated": false,
+      "marker": "·"
+    },
+    {
+      "self_ref": "#/texts/26",
+      "parent": {
+        "cref": "#/groups/1"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "list_item",
+      "prov": [
+        {
+          "page_no": 2,
+          "bbox": {
+            "l": 212.33,
+            "t": 199.94004394531248,
+            "r": 496.382,
+            "b": 186.98004394531256,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            51
+          ]
+        }
+      ],
+      "orig": "· : فرانسوی Université Internationale Imam Khomeini",
+      "text": ": فرانسوی Université Internationale Imam Khomeini",
+      "formatting": null,
+      "hyperlink": null,
+      "enumerated": false,
+      "marker": "·"
+    },
+    {
+      "self_ref": "#/texts/27",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "text",
+      "prov": [
+        {
+          "page_no": 2,
+          "bbox": {
+            "l": 67.344,
+            "t": 184.10004394531256,
+            "r": 524.657,
+            "b": 78.93104394531258,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            507
+          ]
+        }
+      ],
+      "orig": "تبصره 1 ) در صورتی که پدیدآورنده بخواهد اثر پژوهشی خود را به زبانی غیر از زبانهای فوقالذکر منتشر . نماید، باید عبارت نام دانشگاه را از شورای پژوهشی دانشگاه استعلام نماید تبصره 2 ) استفاده از حروف مخفف نام انگلیسی دانشگاه یعنی IKIU . ، به تنهایی مجاز نیست اما استفاده از مخفف کلمه ی International به صورت Int. یا Intl. یا Int'l و کلمهی University به صورت Univ. . بلامانع است تبصره 3 ) در صورتی که نشانی دانشگاه   بر روی فعالیت درج نشده باشد، حتی با وجود اثبات عدم قصور از . سوی متقاضی، مشمول تشویق نخواهد بود",
+      "text": "تبصره 1 ) در صورتی که پدیدآورنده بخواهد اثر پژوهشی خود را به زبانی غیر از زبانهای فوقالذکر منتشر . نماید، باید عبارت نام دانشگاه را از شورای پژوهشی دانشگاه استعلام نماید تبصره 2 ) استفاده از حروف مخفف نام انگلیسی دانشگاه یعنی IKIU . ، به تنهایی مجاز نیست اما استفاده از مخفف کلمه ی International به صورت Int. یا Intl. یا Int'l و کلمهی University به صورت Univ. . بلامانع است تبصره 3 ) در صورتی که نشانی دانشگاه   بر روی فعالیت درج نشده باشد، حتی با وجود اثبات عدم قصور از . سوی متقاضی، مشمول تشویق نخواهد بود",
+      "formatting": null,
+      "hyperlink": null
+    },
+    {
+      "self_ref": "#/texts/28",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "furniture",
+      "label": "page_footer",
+      "prov": [
+        {
+          "page_no": 2,
+          "bbox": {
+            "l": 73.584,
+            "t": 46.68004394531249,
+            "r": 127.057,
+            "b": 35.64004394531253,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            14
+          ]
+        }
+      ],
+      "orig": "صفحه  ی 2 از 4",
+      "text": "صفحه  ی 2 از 4",
+      "formatting": null,
+      "hyperlink": null
+    },
+    {
+      "self_ref": "#/texts/29",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "furniture",
+      "label": "page_header",
+      "prov": [
+        {
+          "page_no": 3,
+          "bbox": {
+            "l": 317.95,
+            "t": 804.4110439453125,
+            "r": 524.638,
+            "b": 795.4770439453125,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            55
+          ]
+        }
+      ],
+      "orig": "شیوه نامهی تشویق پدیدآورندگان فعالیت های پژوهشی دانشگاه",
+      "text": "شیوه نامهی تشویق پدیدآورندگان فعالیت های پژوهشی دانشگاه",
+      "formatting": null,
+      "hyperlink": null
+    },
+    {
+      "self_ref": "#/texts/30",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "text",
+      "prov": [
+        {
+          "page_no": 3,
+          "bbox": {
+            "l": 67.344,
+            "t": 754.1800439453125,
+            "r": 524.658,
+            "b": 494.92104394531253,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            1457
+          ]
+        }
+      ],
+      "orig": "تبصره 4 ) لازم است نشانی دانشگاه در تمامی سکوها و شیوه های انتشار یک فعالیت پژوهشی صحیح باشد و . اگر در یکی، نادرست باشد، فعالیت مشمول تشویق نخواهد بود تبصره 5 ) در صورتی که در یک فعالیت، نشانی دانشگاه بیش از یکبار و به زبان های مختلف درج شده باشد، لازم است همه نشانی ها، صحیح باشند . ، در غیر این صورت فعالیت مشمول تشویق نخواهد بود 2 -4 ) در صورتی که برای متقاضی بیش از یک نشانی درج شده باشد، باید نشانی دانشگاه در مرتبه اول قرار داشته باشد، در غیر اینصورت مشمول تشویق نخواهد بود. 3 -4 ) باشند » چاپ شده « مقاله ها و کتاب های مشمول تشویق، باید و مقاله های در مرحله پذیرش یا چاپ برخط یا کتاب های صرفا ً  دارای قرارداد و یا . گواهی انتشار مشمول تشویق نخواهند بود 4 -4 ) . از تاریخ انتشار فعالیت نباید بیش از دو سال گذشته باشد. مبدأ محاسبه، ماه و سال انتشار است تبصر  ه 6 ) در صورتی که در مواردی خارج از قصور پدیدآورنده، فعالیت پژوهشی شرط بند 4 -4 را احراز نکند، با تأیید دلایل دیرکرد از سوی کمیته منتخب دانشکده و تأیید پژوهش دانشگاه . اقدام خواهد شد 5 -4 ) فعالیت پژوهشی باید مرتبط با رشته . ی تحصیلی پدیدآورندگان باشد 6 -4 ) فعالیت های  پژوهشی  دانشجویان متقاضی باید  در  دوره  تحصیل  آنها  چاپ  و  تأیید  شده  باشند.  مقالات مستخرج از پایان نامه یا رساله (به شرط احراز سایر شرایط) به شرط داشتن تاریخ پذیرش مقاله تا حداکثر یکسال پس از تاریخ دفاع، در صورتی که بعد از فارغ التحصیلی چاپ شده باشند، امکان . تشویق دارند 7 -4 ) فعالیتهای پژوهشی دانشجویان   متقاضی   تنها به شرط داشتن حداقل یک همکار عضو هیأت علمی دانشگاه . بین المللی امام خمینی(ره) قابل بررسی است",
+      "text": "تبصره 4 ) لازم است نشانی دانشگاه در تمامی سکوها و شیوه های انتشار یک فعالیت پژوهشی صحیح باشد و . اگر در یکی، نادرست باشد، فعالیت مشمول تشویق نخواهد بود تبصره 5 ) در صورتی که در یک فعالیت، نشانی دانشگاه بیش از یکبار و به زبان های مختلف درج شده باشد، لازم است همه نشانی ها، صحیح باشند . ، در غیر این صورت فعالیت مشمول تشویق نخواهد بود 2 -4 ) در صورتی که برای متقاضی بیش از یک نشانی درج شده باشد، باید نشانی دانشگاه در مرتبه اول قرار داشته باشد، در غیر اینصورت مشمول تشویق نخواهد بود. 3 -4 ) باشند » چاپ شده « مقاله ها و کتاب های مشمول تشویق، باید و مقاله های در مرحله پذیرش یا چاپ برخط یا کتاب های صرفا ً  دارای قرارداد و یا . گواهی انتشار مشمول تشویق نخواهند بود 4 -4 ) . از تاریخ انتشار فعالیت نباید بیش از دو سال گذشته باشد. مبدأ محاسبه، ماه و سال انتشار است تبصر  ه 6 ) در صورتی که در مواردی خارج از قصور پدیدآورنده، فعالیت پژوهشی شرط بند 4 -4 را احراز نکند، با تأیید دلایل دیرکرد از سوی کمیته منتخب دانشکده و تأیید پژوهش دانشگاه . اقدام خواهد شد 5 -4 ) فعالیت پژوهشی باید مرتبط با رشته . ی تحصیلی پدیدآورندگان باشد 6 -4 ) فعالیت های  پژوهشی  دانشجویان متقاضی باید  در  دوره  تحصیل  آنها  چاپ  و  تأیید  شده  باشند.  مقالات مستخرج از پایان نامه یا رساله (به شرط احراز سایر شرایط) به شرط داشتن تاریخ پذیرش مقاله تا حداکثر یکسال پس از تاریخ دفاع، در صورتی که بعد از فارغ التحصیلی چاپ شده باشند، امکان . تشویق دارند 7 -4 ) فعالیتهای پژوهشی دانشجویان   متقاضی   تنها به شرط داشتن حداقل یک همکار عضو هیأت علمی دانشگاه . بین المللی امام خمینی(ره) قابل بررسی است",
+      "formatting": null,
+      "hyperlink": null
+    },
+    {
+      "self_ref": "#/texts/31",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "section_header",
+      "prov": [
+        {
+          "page_no": 3,
+          "bbox": {
+            "l": 385.51,
+            "t": 461.8300439453125,
+            "r": 524.603,
+            "b": 448.87004394531255,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            28
+          ]
+        }
+      ],
+      "orig": "ماده 5 ) شرط امتیازات متقاضی",
+      "text": "ماده 5 ) شرط امتیازات متقاضی",
+      "formatting": null,
+      "hyperlink": null,
+      "level": 1
+    },
+    {
+      "self_ref": "#/texts/32",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "text",
+      "prov": [
+        {
+          "page_no": 3,
+          "bbox": {
+            "l": 67.344,
+            "t": 445.99004394531255,
+            "r": 524.591,
+            "b": 417.17004394531256,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            190
+          ]
+        }
+      ],
+      "orig": "5 -1 ) در خصوص اعضای هیأت علمی (بند 2 -1 )، پس از کسر 6 امتیاز از فعالیت های چاپ و منتشر شده مشمول تشویق (بند 3 -1 ) در سال شمسی محاسبه مبلغ تشویقی، مازاد فعالیت ها مورد تشویق قرار می گیرند.",
+      "text": "5 -1 ) در خصوص اعضای هیأت علمی (بند 2 -1 )، پس از کسر 6 امتیاز از فعالیت های چاپ و منتشر شده مشمول تشویق (بند 3 -1 ) در سال شمسی محاسبه مبلغ تشویقی، مازاد فعالیت ها مورد تشویق قرار می گیرند.",
+      "formatting": null,
+      "hyperlink": null
+    },
+    {
+      "self_ref": "#/texts/33",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "section_header",
+      "prov": [
+        {
+          "page_no": 3,
+          "bbox": {
+            "l": 378.91,
+            "t": 399.29004394531256,
+            "r": 524.593,
+            "b": 386.3300439453125,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            29
+          ]
+        }
+      ],
+      "orig": "ماده 6 ) مبلغ تشویق هر متقاضی",
+      "text": "ماده 6 ) مبلغ تشویق هر متقاضی",
+      "formatting": null,
+      "hyperlink": null,
+      "level": 1
+    },
+    {
+      "self_ref": "#/texts/34",
+      "parent": {
+        "cref": "#/groups/2"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "list_item",
+      "prov": [
+        {
+          "page_no": 3,
+          "bbox": {
+            "l": 315.19,
+            "t": 383.45004394531253,
+            "r": 524.591,
+            "b": 370.49004394531255,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            46
+          ]
+        }
+      ],
+      "orig": "1 -6 ) مبلغ تشویق : از فرمول زیر محاسبه می شود",
+      "text": "1 -6 ) مبلغ تشویق : از فرمول زیر محاسبه می شود",
+      "formatting": null,
+      "hyperlink": null,
+      "enumerated": false,
+      "marker": ""
+    },
+    {
+      "self_ref": "#/texts/35",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "section_header",
+      "prov": [
+        {
+          "page_no": 3,
+          "bbox": {
+            "l": 103.34,
+            "t": 350.69004394531254,
+            "r": 492.88,
+            "b": 338.69004394531254,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            128
+          ]
+        }
+      ],
+      "orig": "n  (ضر    یب   همکاری     ب   ین المللی )  (امت یاز   کم ی ته منتخب دانشکده به متقاض  ی )  ( ضریب ریالی =    ) مبلغ تشو    یق",
+      "text": "n  (ضر    یب   همکاری     ب   ین المللی )  (امت یاز   کم ی ته منتخب دانشکده به متقاض  ی )  ( ضریب ریالی =    ) مبلغ تشو    یق",
+      "formatting": null,
+      "hyperlink": null,
+      "level": 1
+    },
+    {
+      "self_ref": "#/texts/36",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "section_header",
+      "prov": [
+        {
+          "page_no": 3,
+          "bbox": {
+            "l": 482.98,
+            "t": 319.2050439453126,
+            "r": 524.543,
+            "b": 307.58104394531256,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            9
+          ]
+        }
+      ],
+      "orig": "که در آن،",
+      "text": "که در آن،",
+      "formatting": null,
+      "hyperlink": null,
+      "level": 1
+    },
+    {
+      "self_ref": "#/texts/37",
+      "parent": {
+        "cref": "#/groups/3"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "list_item",
+      "prov": [
+        {
+          "page_no": 3,
+          "bbox": {
+            "l": 281.21,
+            "t": 303.6500439453125,
+            "r": 524.655,
+            "b": 290.6900439453125,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            56
+          ]
+        }
+      ],
+      "orig": "-مقدار ( ضریب ریالی) برابر با 00 ، 000 5 ، 0 ریال است  ؛",
+      "text": "-مقدار ( ضریب ریالی) برابر با 00 ، 000 5 ، 0 ریال است  ؛",
+      "formatting": null,
+      "hyperlink": null,
+      "enumerated": false,
+      "marker": ""
+    },
+    {
+      "self_ref": "#/texts/38",
+      "parent": {
+        "cref": "#/groups/3"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "list_item",
+      "prov": [
+        {
+          "page_no": 3,
+          "bbox": {
+            "l": 67.344,
+            "t": 287.0900439453126,
+            "r": 524.655,
+            "b": 259.58104394531256,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            162
+          ]
+        }
+      ],
+      "orig": "-مقدار (ضریب همکاری بین المللی) عبارت است از 5 / 1 به ازای داشتن حداقل یک همکار دانشجو یا عضو هیأت علمی با نشانی دانشگاه ها و مؤسسات آموزشی و پژوهشی خارج از کشور؛",
+      "text": "-مقدار (ضریب همکاری بین المللی) عبارت است از 5 / 1 به ازای داشتن حداقل یک همکار دانشجو یا عضو هیأت علمی با نشانی دانشگاه ها و مؤسسات آموزشی و پژوهشی خارج از کشور؛",
+      "formatting": null,
+      "hyperlink": null,
+      "enumerated": false,
+      "marker": ""
+    },
+    {
+      "self_ref": "#/texts/39",
+      "parent": {
+        "cref": "#/groups/3"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "list_item",
+      "prov": [
+        {
+          "page_no": 3,
+          "bbox": {
+            "l": 97.344,
+            "t": 255.62004394531255,
+            "r": 524.655,
+            "b": 242.6600439453125,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            90
+          ]
+        }
+      ],
+      "orig": "-مقدار ( n ) برای اعضای هیأت علمی برابر با 1 و برای مشمولان غیرهیأت علمی برابر 5 / 0 . است",
+      "text": "-مقدار ( n ) برای اعضای هیأت علمی برابر با 1 و برای مشمولان غیرهیأت علمی برابر 5 / 0 . است",
+      "formatting": null,
+      "hyperlink": null,
+      "enumerated": false,
+      "marker": ""
+    },
+    {
+      "self_ref": "#/texts/40",
+      "parent": {
+        "cref": "#/groups/3"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "list_item",
+      "prov": [
+        {
+          "page_no": 3,
+          "bbox": {
+            "l": 67.344,
+            "t": 239.7800439453125,
+            "r": 524.644,
+            "b": 212.1510439453125,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            143
+          ]
+        }
+      ],
+      "orig": "تبصره 1 ) مبلغ ضریب ریالی فعالیت های منتشرشده در سال های آینده با پیشنهاد شورای پژوهشی دانشگاه و با تأیید هیأت رییسه دانشگاه، . قابل افزایش است",
+      "text": "تبصره 1 ) مبلغ ضریب ریالی فعالیت های منتشرشده در سال های آینده با پیشنهاد شورای پژوهشی دانشگاه و با تأیید هیأت رییسه دانشگاه، . قابل افزایش است",
+      "formatting": null,
+      "hyperlink": null,
+      "enumerated": false,
+      "marker": ""
+    },
+    {
+      "self_ref": "#/texts/41",
+      "parent": {
+        "cref": "#/groups/3"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "list_item",
+      "prov": [
+        {
+          "page_no": 3,
+          "bbox": {
+            "l": 63.744,
+            "t": 208.94004394531248,
+            "r": 524.591,
+            "b": 180.14004394531253,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            200
+          ]
+        }
+      ],
+      "orig": "2 -6 ) حداکثر  سقف  تشویقی  قابل  پرداخت  به  هر  عضو  هیأت  علمی  متقاضی  در  سال شمسی برابر  با 600 ، 000 ، 000 ریال است که با توجه به کیفیت فعالیت پژوهشی انجام شده  ، به شرح زیر  ، اختصاص می یابد :",
+      "text": "2 -6 ) حداکثر  سقف  تشویقی  قابل  پرداخت  به  هر  عضو  هیأت  علمی  متقاضی  در  سال شمسی برابر  با 600 ، 000 ، 000 ریال است که با توجه به کیفیت فعالیت پژوهشی انجام شده  ، به شرح زیر  ، اختصاص می یابد :",
+      "formatting": null,
+      "hyperlink": null,
+      "enumerated": false,
+      "marker": ""
+    },
+    {
+      "self_ref": "#/texts/42",
+      "parent": {
+        "cref": "#/groups/3"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "list_item",
+      "prov": [
+        {
+          "page_no": 3,
+          "bbox": {
+            "l": 67.344,
+            "t": 177.26004394531253,
+            "r": 496.151,
+            "b": 132.50004394531254,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            193
+          ]
+        }
+      ],
+      "orig": "-همه فعالیت های پژوهشی ( به جز مقاله های علمی پژوهشی دارای چارک اول Q1 ) در پایگاه های WOS و SCOPUS و  دارای  رتبه ( الف) در  پرتال  کمیسیون  نشریات  وزارت  علوم،  تا  سقف 300 ، 000 ، 000 ریال؛",
+      "text": "-همه فعالیت های پژوهشی ( به جز مقاله های علمی پژوهشی دارای چارک اول Q1 ) در پایگاه های WOS و SCOPUS و  دارای  رتبه ( الف) در  پرتال  کمیسیون  نشریات  وزارت  علوم،  تا  سقف 300 ، 000 ، 000 ریال؛",
+      "formatting": null,
+      "hyperlink": null,
+      "enumerated": false,
+      "marker": ""
+    },
+    {
+      "self_ref": "#/texts/43",
+      "parent": {
+        "cref": "#/groups/3"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "list_item",
+      "prov": [
+        {
+          "page_no": 3,
+          "bbox": {
+            "l": 67.464,
+            "t": 129.62004394531255,
+            "r": 496.151,
+            "b": 100.82004394531259,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            157
+          ]
+        }
+      ],
+      "orig": "-( مقاله های علمی پژوهشی دارای چارک اول Q1 ) در پایگاه های WOS و SCOPUS و دارای رتبه (الف ) در پرتال کمیسیون نشریات وزارت علوم، تا سقف 300 ، 000 ، 000 ریال .",
+      "text": "-( مقاله های علمی پژوهشی دارای چارک اول Q1 ) در پایگاه های WOS و SCOPUS و دارای رتبه (الف ) در پرتال کمیسیون نشریات وزارت علوم، تا سقف 300 ، 000 ، 000 ریال .",
+      "formatting": null,
+      "hyperlink": null,
+      "enumerated": false,
+      "marker": ""
+    },
+    {
+      "self_ref": "#/texts/44",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "furniture",
+      "label": "page_footer",
+      "prov": [
+        {
+          "page_no": 3,
+          "bbox": {
+            "l": 73.584,
+            "t": 46.68004394531249,
+            "r": 127.057,
+            "b": 35.64004394531253,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            14
+          ]
+        }
+      ],
+      "orig": "صفحه  ی 3 از 4",
+      "text": "صفحه  ی 3 از 4",
+      "formatting": null,
+      "hyperlink": null
+    },
+    {
+      "self_ref": "#/texts/45",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "furniture",
+      "label": "page_header",
+      "prov": [
+        {
+          "page_no": 4,
+          "bbox": {
+            "l": 317.95,
+            "t": 804.4110439453125,
+            "r": 524.638,
+            "b": 795.4770439453125,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            55
+          ]
+        }
+      ],
+      "orig": "شیوه نامهی تشویق پدیدآورندگان فعالیت های پژوهشی دانشگاه",
+      "text": "شیوه نامهی تشویق پدیدآورندگان فعالیت های پژوهشی دانشگاه",
+      "formatting": null,
+      "hyperlink": null
+    },
+    {
+      "self_ref": "#/texts/46",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "section_header",
+      "prov": [
+        {
+          "page_no": 4,
+          "bbox": {
+            "l": 341.59,
+            "t": 754.1800439453125,
+            "r": 524.593,
+            "b": 741.2200439453126,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            39
+          ]
+        }
+      ],
+      "orig": "ماده 7 ) تشویق مقاله های داغ و پراستناد",
+      "text": "ماده 7 ) تشویق مقاله های داغ و پراستناد",
+      "formatting": null,
+      "hyperlink": null,
+      "level": 1
+    },
+    {
+      "self_ref": "#/texts/47",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "text",
+      "prov": [
+        {
+          "page_no": 4,
+          "bbox": {
+            "l": 67.344,
+            "t": 738.3400439453126,
+            "r": 524.68,
+            "b": 618.3110439453126,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            626
+          ]
+        }
+      ],
+      "orig": "1 -7 ) متقاضیانی که مقالههای آنان در پایگاه   استنادی Web of Science » مقاله پراستناد « به عنوان یا مقاله « داغ » معرفی شوند، یکبار دیگر تشویق دریافت می نمایند . 2 -7 ) دریافت تشویق بابت » مقاله پراستناد « یا مقاله « داغ » ، فقط با درخواست متقاضی و بررسی و تأیید کمیته منتخب دانشکده و تأیید پژوهش دانشگاه انجام می . پذیرد تبصره 1 ) در صورتی که یک مقاله بابت عنوان » مقاله پراستناد « برای بار دوم تشویق دریافت نماید، در صورت معرفی شدن به عنوان مقاله « داغ » ، می تواند برای بار سوم   نیز . تشویق دریافت نماید تبصره 2 ) نوبت های تشویق مجدد بابت عنوان » مقاله پراستناد « یا مقاله « داغ » شامل بند ( 2 -6 ) این شیوه نامه نیستن . د",
+      "text": "1 -7 ) متقاضیانی که مقالههای آنان در پایگاه   استنادی Web of Science » مقاله پراستناد « به عنوان یا مقاله « داغ » معرفی شوند، یکبار دیگر تشویق دریافت می نمایند . 2 -7 ) دریافت تشویق بابت » مقاله پراستناد « یا مقاله « داغ » ، فقط با درخواست متقاضی و بررسی و تأیید کمیته منتخب دانشکده و تأیید پژوهش دانشگاه انجام می . پذیرد تبصره 1 ) در صورتی که یک مقاله بابت عنوان » مقاله پراستناد « برای بار دوم تشویق دریافت نماید، در صورت معرفی شدن به عنوان مقاله « داغ » ، می تواند برای بار سوم   نیز . تشویق دریافت نماید تبصره 2 ) نوبت های تشویق مجدد بابت عنوان » مقاله پراستناد « یا مقاله « داغ » شامل بند ( 2 -6 ) این شیوه نامه نیستن . د",
+      "formatting": null,
+      "hyperlink": null
+    },
+    {
+      "self_ref": "#/texts/48",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "section_header",
+      "prov": [
+        {
+          "page_no": 4,
+          "bbox": {
+            "l": 485.86,
+            "t": 585.0250439453125,
+            "r": 524.66,
+            "b": 573.4010439453125,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            5
+          ]
+        }
+      ],
+      "orig": "تصویب",
+      "text": "تصویب",
+      "formatting": null,
+      "hyperlink": null,
+      "level": 1
+    },
+    {
+      "self_ref": "#/texts/49",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "text",
+      "prov": [
+        {
+          "page_no": 4,
+          "bbox": {
+            "l": 67.344,
+            "t": 570.1900439453126,
+            "r": 524.633,
+            "b": 525.5500439453125,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            251
+          ]
+        }
+      ],
+      "orig": "این شیوه نامه در 7 ماده در تاریخ 27 / 03 / 1402 در شورای پژوهشی دانشگاه، در تاریخ 30 / 03 / 1402 در هیأت رییسه دانشگاه و در تاریخ 28 / 04 / 1402 در هیأت امنای دانشگاه به تصویب رسید و برای فعالیت های چاپ و منتشر شده   از سال 1402 به بعد . لازم الاجراست",
+      "text": "این شیوه نامه در 7 ماده در تاریخ 27 / 03 / 1402 در شورای پژوهشی دانشگاه، در تاریخ 30 / 03 / 1402 در هیأت رییسه دانشگاه و در تاریخ 28 / 04 / 1402 در هیأت امنای دانشگاه به تصویب رسید و برای فعالیت های چاپ و منتشر شده   از سال 1402 به بعد . لازم الاجراست",
+      "formatting": null,
+      "hyperlink": null
+    },
+    {
+      "self_ref": "#/texts/50",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "furniture",
+      "label": "page_footer",
+      "prov": [
+        {
+          "page_no": 4,
+          "bbox": {
+            "l": 73.584,
+            "t": 46.68004394531249,
+            "r": 127.057,
+            "b": 35.64004394531253,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            14
+          ]
+        }
+      ],
+      "orig": "صفحه  ی 4 از 4",
+      "text": "صفحه  ی 4 از 4",
+      "formatting": null,
+      "hyperlink": null
+    }
+  ],
+  "pictures": [
+    {
+      "self_ref": "#/pictures/0",
+      "parent": {
+        "cref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "picture",
+      "prov": [
+        {
+          "page_no": 1,
+          "bbox": {
+            "l": 258.9157409667969,
+            "t": 727.3146362304688,
+            "r": 336.1039733886719,
+            "b": 610.3308410644531,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            0
+          ]
+        }
+      ],
+      "captions": [],
+      "references": [],
+      "footnotes": [],
+      "image": null,
+      "annotations": []
+    }
+  ],
+  "tables": [],
+  "key_value_items": [],
+  "form_items": [],
+  "pages": {
+    "1": {
+      "size": {
+        "width": 595.3200073242188,
+        "height": 841.9200439453125
+      },
+      "image": null,
+      "page_no": 1
+    },
+    "2": {
+      "size": {
+        "width": 595.3200073242188,
+        "height": 841.9200439453125
+      },
+      "image": null,
+      "page_no": 2
+    },
+    "3": {
+      "size": {
+        "width": 595.3200073242188,
+        "height": 841.9200439453125
+      },
+      "image": null,
+      "page_no": 3
+    },
+    "4": {
+      "size": {
+        "width": 595.3200073242188,
+        "height": 841.9200439453125
+      },
+      "image": null,
+      "page_no": 4
+    }
+  }
+}
