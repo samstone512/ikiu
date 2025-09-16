@@ -1,115 +1,106 @@
-import json
-from pathlib import Path
+import pickle
 import logging
 import re
-import pickle
+from pathlib import Path
 from dataclasses import dataclass, asdict
-from typing import List, Dict, Any, Optional
+from typing import List
 
 # --- Configuration ---
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 ROOT_DIR = Path(__file__).parent
-DATA_DIR = ROOT_DIR / "data" / "docling_output"
 OUTPUT_DIR = ROOT_DIR / "03_output"
-INPUT_JSON_NAME = "Book.json"
-INPUT_JSON_PATH = DATA_DIR / INPUT_JSON_NAME
+# Our new, reliable source of truth
+INPUT_MD_PATH = OUTPUT_DIR / "full_regulations.md" 
+# The path for the newly generated, reliable knowledge chunks
 OUTPUT_PICKLE_PATH = OUTPUT_DIR / "knowledge_chunks.pkl"
 
-# --- Data Structure for Knowledge Chunks ---
+# --- Data Structure for Knowledge Chunks (Simplified) ---
 @dataclass
 class KnowledgeChunk:
     """A structured representation of a single piece of knowledge from the document."""
     source_page: int
-    element_type: str
-    cleaned_text: str
+    text: str
+    # We no longer need element_type as the markdown structure is implicit in the text
+    # We also rename cleaned_text to just 'text' for clarity
 
-# --- Core Logic ---
 def clean_text(text: str) -> str:
     """Performs basic text cleaning operations."""
     if not isinstance(text, str):
         return ""
-    text = re.sub(r'[\u200c-\u200f]', '', text) # Remove zero-width non-joiner
+    # Remove markdown headings, list markers, etc. to get pure text.
+    text = re.sub(r'^\s*#+\s*', '', text) # Remove headings (e.g., ##)
+    text = re.sub(r'^\s*[\*\-]\s*', '', text) # Remove list markers (* or -)
     text = re.sub(r'\s+', ' ', text).strip() # Normalize whitespace
     return text
 
-def create_knowledge_chunks(docling_output: Dict[str, Any]) -> List[KnowledgeChunk]:
+def create_knowledge_chunks_from_md(md_content: str) -> List[KnowledgeChunk]:
     """
-    Extracts knowledge chunks from the top-level 'texts' list in the docling JSON output.
+    Extracts knowledge chunks from the clean markdown content.
+    Each paragraph is considered a potential knowledge chunk.
     """
-    texts_list = docling_output.get('texts')
-    if not isinstance(texts_list, list):
-        logging.error("Could not find a valid 'texts' list at the top level of the JSON.")
-        return []
-
     knowledge_chunks = []
-    logging.info(f"Processing {len(texts_list)} text items from the global list...")
+    
+    # We split the entire document by the page separator we defined in the previous phase
+    pages = md_content.split("\n\n---\n\n")
+    logging.info(f"Document split into {len(pages)} pages.")
 
-    for item in texts_list:
-        if not isinstance(item, dict):
-            continue
+    for i, page_text in enumerate(pages):
+        page_number = i + 1
+        # Split each page's content into paragraphs based on empty lines
+        paragraphs = page_text.split('\n\n')
+        
+        for paragraph in paragraphs:
+            cleaned_paragraph = clean_text(paragraph)
+            
+            # We only create a chunk if it has meaningful content
+            if len(cleaned_paragraph) > 20: # Filter out very short/empty lines
+                chunk = KnowledgeChunk(
+                    source_page=page_number,
+                    text=cleaned_paragraph
+                )
+                knowledge_chunks.append(chunk)
 
-        # Extract text
-        text_content = item.get('text', '')
-        cleaned_content = clean_text(text_content)
-
-        # Extract page number from the 'prov' (provenance) field
-        source_page = None
-        prov_list = item.get('prov')
-        if isinstance(prov_list, list) and prov_list:
-            # Take provenance from the first item in the list
-            page_info = prov_list[0]
-            if isinstance(page_info, dict):
-                source_page = page_info.get('page_no')
-
-        # Extract element type
-        element_type = item.get('label', 'unknown')
-
-        # We only create a chunk if we have the essential information
-        if cleaned_content and source_page is not None:
-            chunk = KnowledgeChunk(
-                source_page=source_page,
-                element_type=element_type,
-                cleaned_text=cleaned_content
-            )
-            knowledge_chunks.append(chunk)
-
-    logging.info(f"Successfully created {len(knowledge_chunks)} knowledge chunks.")
+    logging.info(f"Successfully created {len(knowledge_chunks)} knowledge chunks from Markdown file.")
     return knowledge_chunks
 
 def save_chunks_to_pickle(chunks: List[KnowledgeChunk], file_path: Path):
     """Saves the list of knowledge chunks to a pickle file."""
     try:
-        # Ensure the output directory exists
         file_path.parent.mkdir(parents=True, exist_ok=True)
+        # We are converting the list of dataclass objects to a list of dicts
+        # for better compatibility with downstream processes.
+        chunks_as_dicts = [asdict(chunk) for chunk in chunks]
         with open(file_path, 'wb') as f:
-            pickle.dump(chunks, f)
-        logging.info(f"Successfully saved {len(chunks)} chunks to: {file_path}")
+            pickle.dump(chunks_as_dicts, f)
+        logging.info(f"Successfully saved {len(chunks_as_dicts)} chunks to: {file_path}")
     except Exception as e:
-        logging.error(f"Failed to save chunks to pickle file: {e}", exc_info=True)
+        logging.error(f"Failed to save chunks to pickle file: {e}")
 
 def main():
-    """Main function to orchestrate the full knowledge weaving process."""
-    logging.info("--- Starting Phase 07: Knowledge Weaver (Final Production Run) ---")
+    """Main function to orchestrate the new knowledge weaving process."""
+    logging.info("--- Starting 02_knowledge_weaver: Rebuilding from clean Markdown ---")
     
     try:
-        with open(INPUT_JSON_PATH, 'r', encoding='utf-8') as f:
-            docling_data = json.load(f)
-        logging.info("Successfully loaded the docling JSON file.")
+        with open(INPUT_MD_PATH, 'r', encoding='utf-8') as f:
+            markdown_content = f.read()
+        logging.info("Successfully loaded the full_regulations.md file.")
+    except FileNotFoundError:
+        logging.error(f"FATAL: The input file was not found at '{INPUT_MD_PATH}'")
+        return
     except Exception as e:
-        logging.error(f"Failed to load the primary JSON file: {e}", exc_info=True)
+        logging.error(f"Failed to load the Markdown file: {e}")
         return
 
-    knowledge_chunks = create_knowledge_chunks(docling_data)
+    knowledge_chunks = create_knowledge_chunks_from_md(markdown_content)
 
     if knowledge_chunks:
         save_chunks_to_pickle(knowledge_chunks, OUTPUT_PICKLE_PATH)
-        # Log the first couple of chunks to verify
         logging.info("--- Verification: First 2 Chunks ---")
         for chunk in knowledge_chunks[:2]:
-            logging.info(f"Page: {chunk.source_page}, Type: {chunk.element_type}, Text: '{chunk.cleaned_text[:100]}...'")
+            logging.info(f"Page: {chunk.source_page}, Text: '{chunk.text[:150]}...'")
     
-    logging.info("--- Knowledge Weaver phase complete. ---")
+    logging.info("--- Knowledge Weaver phase (Rebuild) complete. ---")
 
 
 if __name__ == "__main__":

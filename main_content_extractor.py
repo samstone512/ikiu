@@ -1,3 +1,8 @@
+#phase00
+# use gemini-1.5-flash-latest to extract text from a PDF file
+# The extracted text will be saved in a markdown file with proper formatting
+# The script handles multi-column layouts and tables, converting them to markdown format
+# Harvester
 import os
 import fitz  # PyMuPDF
 import google.generativeai as genai

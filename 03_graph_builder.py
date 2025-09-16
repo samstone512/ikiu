@@ -1,118 +1,169 @@
 import pickle
-from pathlib import Path
 import logging
-import re
-import unicodedata
-from dataclasses import dataclass
-from typing import List, Optional, Dict, Any, Set, Tuple
-from transformers import pipeline, AutoTokenizer, AutoModelForTokenClassification
+from pathlib import Path
+from typing import List, Dict, Any, Set, Tuple
+import google.generativeai as genai
+import os
+from dotenv import load_dotenv
 from tqdm import tqdm
+import json
 import itertools
-import networkx as nx
-import matplotlib.pyplot as plt
-import matplotlib.font_manager as fm
+import time
 
 # --- Configuration ---
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 ROOT_DIR = Path(__file__).parent
 OUTPUT_DIR = ROOT_DIR / "03_output"
-KNOWLEDGE_CHUNK_PATH = OUTPUT_DIR / "knowledge_chunks.pkl"
-GRAPH_IMAGE_PATH = OUTPUT_DIR / "knowledge_graph.png"
-GRAPH_DATA_PATH = OUTPUT_DIR / "graph_data.pkl" # <<< NEW: Path to save graph data
+INPUT_CHUNKS_PATH = OUTPUT_DIR / "knowledge_chunks.pkl"
+ENTITY_EXTRACTION_PROMPT_PATH = ROOT_DIR / "02_prompts" / "entity_extraction.txt"
+GRAPH_DATA_PATH = OUTPUT_DIR / "graph_data.pkl"
 
-# --- Data Structure Definitions ---
-@dataclass
-class KnowledgeChunk:
-    source_page: int
-    element_type: str
-    cleaned_text: str
+# --- NEW: Checkpoint file to save progress ---
+CHECKPOINT_FILE_PATH = OUTPUT_DIR / "graph_builder_checkpoint.pkl"
 
-@dataclass(frozen=True, eq=True)
-class EntityNode:
-    text: str
-    type: str
+def setup_gemini():
+    """Configures the Gemini API key."""
+    load_dotenv()
+    try:
+        api_key = os.getenv("GOOGLE_API_KEY")
+        if not api_key:
+            raise ValueError("GOOGLE_API_KEY is not set in the .env file or environment.")
+        genai.configure(api_key=api_key)
+        return True
+    except Exception as e:
+        logging.error(f"Error configuring Gemini: {e}")
+        return False
 
-# --- Functions (Unchanged) ---
-def clean_text_final(text: str) -> str:
-    if not isinstance(text, str): return ""
-    text = unicodedata.normalize('NFKC', text)
-    text = re.sub(r'^[\s\-_ـ\.\d]+|[\s\-_ـ\.\d]+$', '', text).strip()
-    text = re.sub(r'\s*\d+\s*ـ\s*\d+\s*', ' ', text)
-    text = re.sub(r'\s+', ' ', text).strip()
-    return text
+def load_knowledge_chunks(file_path: Path) -> List[Dict[str, Any]]:
+    """Loads the list of chunk dictionaries from a pickle file."""
+    try:
+        with open(file_path, 'rb') as f:
+            return pickle.load(f)
+    except Exception as e:
+        logging.error(f"Failed to load chunks from pickle file: {e}")
+        return []
 
-def load_knowledge_chunks(file_path: Path) -> Optional[List[KnowledgeChunk]]:
-    if not file_path.exists(): return None
-    with open(file_path, 'rb') as f: return pickle.load(f)
+def load_prompt_from_file(file_path: Path) -> str:
+    """Loads the entity extraction prompt from a text file."""
+    try:
+        return file_path.read_text(encoding='utf-8')
+    except Exception as e:
+        logging.error(f"Failed to load prompt from {file_path}: {e}")
+        return ""
 
-def initialize_ner_pipeline() -> pipeline:
-    model_name = "HooshvareLab/bert-fa-zwnj-base-ner"
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModelForTokenClassification.from_pretrained(model_name)
-    return pipeline("ner", model=model, tokenizer=tokenizer, aggregation_strategy="simple")
-
-def extract_relations(chunks: List[KnowledgeChunk], ner_pipeline: pipeline) -> Tuple[Set[EntityNode], Set[Tuple[EntityNode, EntityNode]]]:
-    all_nodes: Set[EntityNode] = set()
-    all_edges: Set[Tuple[EntityNode, EntityNode]] = set()
-    for chunk in tqdm(chunks, desc="Processing Relations"):
-        cleaned_text = clean_text_final(chunk.cleaned_text)
-        if not cleaned_text: continue
+def extract_entities_from_chunk(chunk_text: str, model, prompt_template: str) -> List[str]:
+    """
+    Uses the Gemini model to extract entities, with a retry mechanism.
+    """
+    prompt = prompt_template.format(text_chunk=chunk_text)
+    
+    # --- NEW: Retry Mechanism ---
+    max_retries = 3
+    retry_delay_seconds = 5
+    for attempt in range(max_retries):
         try:
-            entities_in_chunk = [EntityNode(text=e['word'], type=e['entity_group']) for e in ner_pipeline(cleaned_text)]
-            if len(entities_in_chunk) > 1:
-                all_nodes.update(entities_in_chunk)
-                for pair in itertools.combinations(entities_in_chunk, 2):
-                    all_edges.add(tuple(sorted(pair, key=lambda x: x.text)))
-        except Exception: continue
-    return all_nodes, all_edges
+            # Set a timeout for the API call
+            response = model.generate_content(prompt, request_options={'timeout': 300})
+            entities_text = response.text.strip().replace("```json", "").replace("```", "").strip()
+            entities = json.loads(entities_text)
+            
+            if isinstance(entities, list):
+                return sorted(list(set(str(e) for e in entities)))
+            else: # If response is not a list
+                return []
+        except json.JSONDecodeError:
+            logging.warning(f"Could not decode JSON on attempt {attempt+1}. Response: '{entities_text[:100]}...'")
+        except Exception as e:
+            logging.warning(f"API call failed on attempt {attempt+1}/{max_retries}: {e}")
+        
+        if attempt < max_retries - 1:
+            logging.info(f"Waiting for {retry_delay_seconds}s before retrying...")
+            time.sleep(retry_delay_seconds)
+    
+    logging.error(f"Failed to extract entities for chunk after {max_retries} attempts.")
+    return []
 
-def visualize_graph(nodes: Set[EntityNode], edges: Set[Tuple[EntityNode, EntityNode]], output_path: Path):
-    # This function remains the same, no changes needed here.
-    user_font_path = "D:/Software/font/F/Tahoma.ttf" 
-    G = nx.Graph()
-    labels = {}
-    for node in nodes: G.add_node(node.text); labels[node.text] = node.text
-    for node1, node2 in edges: G.add_edge(node1.text, node2.text)
-    font_prop = fm.FontProperties(fname=user_font_path)
-    plt.figure(figsize=(20, 20))
-    pos = nx.spring_layout(G, k=0.9, iterations=50)
-    nx.draw_networkx_nodes(G, pos, node_color='skyblue', node_size=2000)
-    nx.draw_networkx_edges(G, pos, alpha=0.5, edge_color='gray')
-    nx.draw_networkx_labels(G, pos, labels=labels, font_size=10, font_family=font_prop.get_name())
-    plt.title("Knowledge Graph Visualization", size=20)
-    plt.axis('off')
-    plt.savefig(output_path, format="PNG", dpi=300)
-    logging.info(f"Graph visualization saved successfully to: {output_path}")
 
-# --- NEW: Function to save graph data ---
-def save_graph_data(nodes: Set[EntityNode], edges: Set[Tuple[EntityNode, EntityNode]], file_path: Path):
-    """Saves the graph nodes and edges to a pickle file."""
+def build_graph_from_chunks(chunks_with_entities: List[Dict[str, Any]]) -> Tuple[List[str], List[Tuple[str, str]]]:
+    """Builds nodes and edges from chunks that have an 'entities' list."""
+    all_nodes: Set[str] = set()
+    all_edges: Set[Tuple[str, str]] = set()
+
+    for chunk in chunks_with_entities:
+        entities = chunk.get("entities", [])
+        if len(entities) > 1:
+            all_nodes.update(entities)
+            for combo in itertools.combinations(sorted(entities), 2):
+                all_edges.add(combo)
+    
+    return sorted(list(all_nodes)), sorted(list(all_edges))
+
+def save_data(data: Any, file_path: Path):
+    """Generic function to save data to a pickle file."""
     try:
         file_path.parent.mkdir(parents=True, exist_ok=True)
         with open(file_path, 'wb') as f:
-            pickle.dump({'nodes': nodes, 'edges': edges}, f)
-        logging.info(f"Successfully saved graph data ({len(nodes)} nodes, {len(edges)} edges) to: {file_path}")
+            pickle.dump(data, f)
+        logging.info(f"Successfully saved data to {file_path}")
     except Exception as e:
-        logging.error(f"Failed to save graph data: {e}", exc_info=True)
+        logging.error(f"Failed to save data to {file_path}: {e}")
 
 def main():
-    logging.info("--- Starting Phase 08: Graph Builder (Final Run with Data Persistence) ---")
+    """Main function to orchestrate the robust graph building process."""
+    logging.info("--- Starting 03_graph_builder (Robust Version) ---")
     
-    knowledge_chunks = load_knowledge_chunks(KNOWLEDGE_CHUNK_PATH)
-    if not knowledge_chunks: return
+    if not setup_gemini():
+        return
 
-    ner_pipeline = initialize_ner_pipeline()
-    graph_nodes, graph_edges = extract_relations(knowledge_chunks, ner_pipeline)
+    knowledge_chunks = load_knowledge_chunks(INPUT_CHUNKS_PATH)
+    if not knowledge_chunks:
+        return
 
-    logging.info(f"\nFound {len(graph_nodes)} nodes and {len(graph_edges)} edges.")
+    prompt = load_prompt_from_file(ENTITY_EXTRACTION_PROMPT_PATH)
+    if not prompt:
+        return
 
-    if graph_nodes and graph_edges:
-        visualize_graph(graph_nodes, graph_edges, GRAPH_IMAGE_PATH)
-        save_graph_data(graph_nodes, graph_edges, GRAPH_DATA_PATH) # <<< NEW: Saving the data
+    model = genai.GenerativeModel('gemini-1.5-flash-latest')
 
-    logging.info("\n--- Phase 08: GraphBuilder Complete ---")
+    # --- NEW: Load from checkpoint if it exists ---
+    chunks_with_entities = []
+    start_index = 0
+    if CHECKPOINT_FILE_PATH.exists():
+        logging.info(f"Found checkpoint file. Loading previous progress...")
+        chunks_with_entities = load_knowledge_chunks(CHECKPOINT_FILE_PATH)
+        start_index = len(chunks_with_entities)
+        logging.info(f"Resuming from chunk {start_index + 1}/{len(knowledge_chunks)}")
 
+    # Process remaining chunks
+    if start_index < len(knowledge_chunks):
+        for i in tqdm(range(start_index, len(knowledge_chunks)), desc="Extracting Entities"):
+            chunk = knowledge_chunks[i]
+            entities = extract_entities_from_chunk(chunk['text'], model, prompt)
+            
+            # We add the chunk to the list even if no entities are found
+            # to ensure the checkpoint logic works correctly.
+            chunk['entities'] = entities
+            chunks_with_entities.append(chunk)
+
+            # Save progress after each chunk
+            save_data(chunks_with_entities, CHECKPOINT_FILE_PATH)
+
+    logging.info(f"Entity extraction complete. Found entities in {len([c for c in chunks_with_entities if c['entities']])} chunks.")
+    
+    # Save the final, complete list of chunks with entities
+    save_data(chunks_with_entities, INPUT_CHUNKS_PATH)
+    
+    nodes, edges = build_graph_from_chunks(chunks_with_entities)
+    graph_data = {"nodes": nodes, "edges": edges}
+    save_data(graph_data, GRAPH_DATA_PATH)
+    
+    # --- NEW: Clean up checkpoint file after successful completion ---
+    if CHECKPOINT_FILE_PATH.exists():
+        os.remove(CHECKPOINT_FILE_PATH)
+        logging.info("Checkpoint file removed.")
+        
+    logging.info("--- Graph Builder phase (Rebuild) complete. ---")
 
 if __name__ == "__main__":
     main()
