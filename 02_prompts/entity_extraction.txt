@@ -1,33 +1,23 @@
-You are a meticulous AI assistant specialized in parsing legal and regulatory documents from Iranian universities. Your task is to act as a structured data extractor to build a knowledge graph.
+You are an expert AI for building knowledge graphs from Iranian university regulations. Your task is to extract all significant entities from the text chunk below.
 
-Analyze the provided text chunk, which is a segment of a university regulation document, and extract entities and their relationships in a strict JSON format.
+**Entity Types:**
+- `Regulation` (آیین‌نامه): A formal document or title.
+- `Article` (ماده): A specific numbered rule or clause.
+- `Topic` (موضوع): The core subject, like "فعالیت های فرهنگی".
+- `Condition` (شرط): A requirement, often marked by "حداقل", "باید".
+- `Organization` (سازمان): A committee or department, like "هیأت ممیزه".
+- `Role` (نقش): A person or position, like "متقاضی", "عضو هیأت علمی".
+- `General_Entity` (موجودیت عمومی): Any other key noun phrase that doesn't fit the above but is important. Use this as a fallback.
 
-**ENTITY DEFINITIONS:**
+**Instructions:**
+1.  Read the text carefully.
+2.  Identify entities and classify them. If you are unsure about the type, classify it as `General_Entity`.
+3.  Return the result as a single, valid JSON object where keys are the entity types and values are lists of the extracted entity strings.
+4.  If no entities are found, return an empty JSON object {{}}.
 
-1.  `Regulation` (آیین‌نامه): The main document or chapter title (e.g., "آیین‌نامه ارتقای مرتبه", "دستورالعمل طرز تشکیل هیأت ممیزه").
-2.  `Article` (ماده): A specific numbered rule or article (e.g., "ماده ۱", "تبصره ۲"). This is the primary anchor for rules.
-3.  `Topic` (موضوع): The core subject of an article. This is the "what". (e.g., "فعالیت های فرهنگی، تربیتی و اجتماعی", "کیفیت تدریس", "مقاله علمی-پژوهشی").
-4.  `Condition` (شرط): A specific prerequisite, criterion, or requirement that MUST be met. Look for keywords like "حداقل", "مشروط به", "باید", "الزامی است". (e.g., "کسب حداقل ۷۰ امتیاز", "حداقل ۱۰ سال سابقه تدریس").
-5.  `Benefit_Penalty` (مزیت/جریمه): The positive or negative consequence, outcome, or score resulting from a rule. This can be points, a promotion, a right, or a penalty. (e.g., "تا ۷ امتیاز", "به مرتبه دانشیاری ارتقا می‌یابد", "به مدت یک سال به تعویق می افتد").
-6.  `Organization` (سازمان): A specific entity, department, council, or committee mentioned in the text. (e.g., "هیأت ممیزه مؤسسه", "وزارت علوم", "شورای عالی انقلاب فرهنگی").
-
-**RELATIONSHIP DEFINITIONS:**
-
-* `HAS_SUBSECTION`: A `Regulation` has an `Article` as a subsection.
-* `CONCERNS`: An `Article` concerns a `Topic`.
-* `REQUIRES`: An `Article` or `Topic` requires a `Condition`.
-* `RESULTS_IN`: A `Topic` or `Condition` results in a `Benefit_Penalty`.
-* `GOVERNED_BY`: An `Article` or `Topic` is governed by an `Organization`.
-
-**INSTRUCTIONS:**
-1.  Read the text chunk carefully.
-2.  Extract all relevant entities and relationships according to the definitions above.
-3.  Be precise. The `id` for each entity should be a direct, concise quote from the text.
-4.  Output a single, valid JSON object with 'entities' and 'relationships' as the top-level keys.
-
-Text Chunk:
+**Text Chunk:**
 ---
 {text_chunk}
 ---
 
-JSON Output:
+**JSON Output:**
