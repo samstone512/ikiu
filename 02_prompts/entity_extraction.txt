@@ -13,7 +13,7 @@ You are an expert AI for building knowledge graphs from Iranian university regul
 1.  Read the text carefully.
 2.  Identify entities and classify them. If you are unsure about the type, classify it as `General_Entity`.
 3.  Return the result as a single, valid JSON object where keys are the entity types and values are lists of the extracted entity strings.
-4.  If no entities are found, return an empty JSON object {}.
+4.  If no entities are found, return an empty JSON object {{}}.
 
 **Text Chunk:**
 ---
