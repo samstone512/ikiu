@@ -1,0 +1,21 @@
+You are an AI assistant specializing in building knowledge graphs from regulatory documents.
+Your task is to extract all key nouns and noun phrases from the given text chunk. These should represent the core concepts, roles, committees, documents, and actions.
+
+**Context:**
+---
+{text_chunk}
+---
+
+**Instructions:**
+1.  Identify all significant entities in the text.
+2.  Think about concepts like "دانشجو", "هیأت ممیزه", "آیین نامه ارتقا", "مقاله علمی-پژوهشی", "دانشیاری", etc.
+3.  Return the result as a single, valid JSON list of strings.
+4.  Do not include generic terms. Focus on entities specific to the domain of university regulations.
+5.  If no specific entities are found, return an empty list [].
+
+**Example:**
+Text: "بررسی پرونده متقاضی در هیأت ممیزه موسسه انجام می شود."
+JSON Output:
+["پرونده متقاضی", "هیأت ممیزه موسسه"]
+
+JSON Output:
