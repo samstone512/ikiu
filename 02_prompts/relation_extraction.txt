@@ -1,0 +1,18 @@
+You are an AI expert in knowledge graph construction. Your task is to describe the semantic relationship between two entities within a given context.
+
+**Context:**
+---
+{context_text}
+---
+
+**Entities:**
+- Source Entity: "{source_entity}"
+- Target Entity: "{target_entity}"
+
+**Instructions:**
+1.  Analyze how the two entities interact in the context.
+2.  Describe the relationship from the Source to the Target in a short, active verb phrase.
+3.  Be concise and clear. For example: "requests from", "is a condition for", "is evaluated by", "is a part of".
+4.  Output ONLY the verb phrase.
+
+Relationship:

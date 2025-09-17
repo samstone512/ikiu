@@ -1,83 +1,116 @@
-#phase10
 import pickle
 import os
+import logging
+from pathlib import Path
+from typing import List, Dict, Any, Tuple
+import google.generativeai as genai
+from dotenv import load_dotenv
+from tqdm import tqdm
+import time
 
-# --- Constants ---
-# Path to the input data from previous phases
-GRAPH_DATA_PATH = "03_output/graph_data.pkl"
-KNOWLEDGE_CHUNKS_PATH = "03_output/knowledge_chunks.pkl"
+# --- Configuration ---
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Path for the final output of this phase
-ENHANCED_GRAPH_DATA_PATH = "03_output/graph_enhanced_data.pkl"
+ROOT_DIR = Path(__file__).parent
+OUTPUT_DIR = ROOT_DIR / "03_output"
+GRAPH_DATA_PATH = OUTPUT_DIR / "graph_data.pkl"
+KNOWLEDGE_CHUNKS_PATH = OUTPUT_DIR / "knowledge_chunks.pkl"
+PROMPT_PATH = ROOT_DIR / "02_prompts" / "relation_extraction.txt"
+ENHANCED_GRAPH_DATA_PATH = OUTPUT_DIR / "graph_enhanced_data.pkl"
 
-def load_pickle_data(file_path):
+def setup_gemini():
+    """Configures the Gemini API key."""
+    load_dotenv()
+    try:
+        api_key = os.getenv("GOOGLE_API_KEY")
+        if not api_key:
+            raise ValueError("GOOGLE_API_KEY is not set.")
+        genai.configure(api_key=api_key)
+        return True
+    except Exception as e:
+        logging.error(f"Error configuring Gemini: {e}")
+        return False
+
+def load_data(file_path: Path) -> Any:
     """Loads data from a pickle file."""
-    if not os.path.exists(file_path):
-        print(f"Error: File not found at '{file_path}'")
+    if not file_path.exists():
+        logging.error(f"File not found: {file_path}")
         return None
     try:
         with open(file_path, "rb") as f:
             return pickle.load(f)
     except Exception as e:
-        print(f"Error loading data from {file_path}: {e}")
+        logging.error(f"Error loading {file_path}: {e}")
         return None
 
-def find_context_for_edge(source, target, knowledge_chunks):
+def find_context_for_edge(source: str, target: str, chunks: List[Dict]) -> str:
     """Finds the text chunk that contains both the source and target entities."""
-    for chunk in knowledge_chunks:
-        # The entities are stored in the 'entities' key of each chunk dictionary
+    for chunk in chunks:
         entities_in_chunk = chunk.get("entities", [])
         if source in entities_in_chunk and target in entities_in_chunk:
-            # Return the text of the first chunk that contains both
-            return chunk.get("text", "Text not found in chunk.")
-    return None # Return None if no chunk contains both entities
+            return chunk.get("text", "")
+    return None
+
+def get_relationship(context: str, source: str, target: str, model, prompt_template: str) -> str:
+    """Uses the LLM to extract the relationship between two entities."""
+    prompt = prompt_template.format(context_text=context, source_entity=source, target_entity=target)
+
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            response = model.generate_content(prompt, request_options={'timeout': 120})
+            return response.text.strip()
+        except Exception as e:
+            logging.warning(f"API call failed on attempt {attempt+1}/{max_retries}: {e}")
+            if attempt < max_retries - 1:
+                time.sleep(2)
+    return "RELATIONSHIP_EXTRACTION_FAILED"
 
 def main():
-    """Main function to find the context for each co-occurrence edge."""
-    print("Starting Phase 10: Relation Enhancer")
-    print("Loading graph data and knowledge chunks...")
+    """Main function to enhance the graph with semantic relationships."""
+    logging.info("--- Starting Phase 10: Relation Enhancer ---")
 
-    # Load the graph data (nodes and edges)
-    graph_data = load_pickle_data(GRAPH_DATA_PATH)
-    if graph_data is None:
+    if not setup_gemini():
         return
 
-    # Load the knowledge chunks
-    knowledge_chunks = load_pickle_data(KNOWLEDGE_CHUNKS_PATH)
-    if knowledge_chunks is None:
+    graph_data = load_data(GRAPH_DATA_PATH)
+    knowledge_chunks = load_data(KNOWLEDGE_CHUNKS_PATH)
+    try:
+        prompt_template = PROMPT_PATH.read_text(encoding='utf-8')
+    except Exception as e:
+        logging.error(f"Failed to load prompt: {e}")
         return
 
-    nodes = graph_data.get("nodes", [])
+    if not all([graph_data, knowledge_chunks, prompt_template]):
+        logging.error("Halting due to missing data or prompt file.")
+        return
+
     edges = graph_data.get("edges", [])
-    
-    print(f"Successfully loaded {len(nodes)} nodes and {len(edges)} edges.")
-    print("-" * 50)
-    
-    # Let's process a small sample of edges first to test our logic
-    edges_to_process = edges[:5] # We'll just test the first 5 edges
-    
-    print(f"Finding context for the first {len(edges_to_process)} edges...\n")
+    nodes = graph_data.get("nodes", [])
+    if not edges:
+        logging.warning("Graph data contains 0 edges. Please rebuild graph data if this is unexpected.")
+        return
 
-    for i, edge in enumerate(edges_to_process):
-        source_node, target_node = edge
-        
-        # Find the text chunk that provides the context for this edge
-        context_text = find_context_for_edge(source_node, target_node, knowledge_chunks)
-        
-        print(f"--- Edge {i+1}/{len(edges_to_process)} ---")
-        print(f"  - Source: {source_node}")
-        print(f"  - Target: {target_node}")
-        
-        if context_text:
-            print(f"  - Found Context: '{context_text.strip()}'")
+    logging.info(f"Loaded graph with {len(nodes)} nodes and {len(edges)} edges.")
+
+    model = genai.GenerativeModel('gemini-1.5-pro-latest')
+
+    edges_to_process = edges[:10]
+    enhanced_relations = []
+
+    for source, target in tqdm(edges_to_process, desc="Extracting Relations"):
+        context = find_context_for_edge(source, target, knowledge_chunks)
+        if context:
+            relationship = get_relationship(context, source, target, model, prompt_template)
+            tqdm.write(f"'{source}' -> '{relationship}' -> '{target}'")
+            enhanced_relations.append((source, relationship, target))
         else:
-            print(f"  - Context not found!")
-        print()
+            tqdm.write(f"Context not found for edge: ({source}, {target})")
 
-    print("-" * 50)
-    print("Context finding test completed.")
-    print("Next step will be to design a prompt and use an LLM to extract the relation.")
-
+    logging.info("--- Sample processing complete ---")
+    logging.info("First 10 relationships extracted:")
+    for rel in enhanced_relations:
+        print(rel)
 
 if __name__ == "__main__":
     main()
