@@ -13,10 +13,14 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 ROOT_DIR = Path(__file__).parent
 OUTPUT_DIR = ROOT_DIR / "03_output"
+
 GRAPH_DATA_PATH = OUTPUT_DIR / "graph_data.pkl"
 KNOWLEDGE_CHUNKS_PATH = OUTPUT_DIR / "knowledge_chunks.pkl"
 PROMPT_PATH = ROOT_DIR / "02_prompts" / "relation_extraction.txt"
+# This is the final output of our phase
 ENHANCED_GRAPH_DATA_PATH = OUTPUT_DIR / "graph_enhanced_data.pkl"
+# Checkpoint file to save progress during the long run
+CHECKPOINT_PATH = OUTPUT_DIR / "relation_enhancer_checkpoint.pkl"
 
 def setup_gemini():
     """Configures the Gemini API key."""
@@ -46,15 +50,17 @@ def load_data(file_path: Path) -> Any:
 def find_context_for_edge(source: str, target: str, chunks: List[Dict]) -> str:
     """Finds the text chunk that contains both the source and target entities."""
     for chunk in chunks:
-        entities_in_chunk = chunk.get("entities", [])
-        if source in entities_in_chunk and target in entities_in_chunk:
+        entities_dict = chunk.get("entities", {})
+        if not isinstance(entities_dict, dict):
+            continue
+        all_entities_in_chunk = [entity for entity_list in entities_dict.values() for entity in entity_list]
+        if source in all_entities_in_chunk and target in all_entities_in_chunk:
             return chunk.get("text", "")
     return None
 
 def get_relationship(context: str, source: str, target: str, model, prompt_template: str) -> str:
     """Uses the LLM to extract the relationship between two entities."""
     prompt = prompt_template.format(context_text=context, source_entity=source, target_entity=target)
-
     max_retries = 3
     for attempt in range(max_retries):
         try:
@@ -67,50 +73,67 @@ def get_relationship(context: str, source: str, target: str, model, prompt_templ
     return "RELATIONSHIP_EXTRACTION_FAILED"
 
 def main():
-    """Main function to enhance the graph with semantic relationships."""
-    logging.info("--- Starting Phase 10: Relation Enhancer ---")
-
-    if not setup_gemini():
-        return
-
+    """Main function to enhance the entire graph with semantic relationships."""
+    logging.info("--- Starting Phase 10: Relation Enhancer (FULL RUN) ---")
+    
+    if not setup_gemini(): return
     graph_data = load_data(GRAPH_DATA_PATH)
     knowledge_chunks = load_data(KNOWLEDGE_CHUNKS_PATH)
     try:
         prompt_template = PROMPT_PATH.read_text(encoding='utf-8')
     except Exception as e:
-        logging.error(f"Failed to load prompt: {e}")
-        return
+        logging.error(f"Failed to load prompt: {e}"); return
 
-    if not all([graph_data, knowledge_chunks, prompt_template]):
-        logging.error("Halting due to missing data or prompt file.")
-        return
+    if not all([graph_data, knowledge_chunks, prompt_template]): return
 
     edges = graph_data.get("edges", [])
     nodes = graph_data.get("nodes", [])
-    if not edges:
-        logging.warning("Graph data contains 0 edges. Please rebuild graph data if this is unexpected.")
-        return
-
     logging.info(f"Loaded graph with {len(nodes)} nodes and {len(edges)} edges.")
 
     model = genai.GenerativeModel('gemini-1.5-pro-latest')
-
-    edges_to_process = edges[:10]
+    
+    # Load from checkpoint if it exists
     enhanced_relations = []
+    start_index = 0
+    if os.path.exists(CHECKPOINT_PATH):
+        enhanced_relations = load_data(CHECKPOINT_PATH)
+        start_index = len(enhanced_relations)
+        logging.info(f"Resuming from checkpoint. {start_index} relations already processed.")
 
-    for source, target in tqdm(edges_to_process, desc="Extracting Relations"):
-        context = find_context_for_edge(source, target, knowledge_chunks)
-        if context:
-            relationship = get_relationship(context, source, target, model, prompt_template)
-            tqdm.write(f"'{source}' -> '{relationship}' -> '{target}'")
-            enhanced_relations.append((source, relationship, target))
-        else:
-            tqdm.write(f"Context not found for edge: ({source}, {target})")
+    # Process all edges from the start_index
+    with tqdm(total=len(edges), initial=start_index, desc="Enhancing Relations") as pbar:
+        for i in range(start_index, len(edges)):
+            source, target = edges[i]
+            context = find_context_for_edge(source, target, knowledge_chunks)
+            if context:
+                relationship = get_relationship(context, source, target, model, prompt_template)
+                enhanced_relations.append((source, relationship, target))
+            
+            # Save progress periodically (e.g., every 10 edges)
+            if i % 10 == 0:
+                with open(CHECKPOINT_PATH, 'wb') as f:
+                    pickle.dump(enhanced_relations, f)
+            
+            pbar.update(1)
 
-    logging.info("--- Sample processing complete ---")
-    logging.info("First 10 relationships extracted:")
-    for rel in enhanced_relations:
-        print(rel)
+    logging.info("--- Full processing complete ---")
+    
+    # Final save of all relations
+    final_graph_data = {
+        "nodes": nodes,
+        "relations": enhanced_relations
+    }
+    with open(ENHANCED_GRAPH_DATA_PATH, 'wb') as f:
+        pickle.dump(final_graph_data, f)
+    
+    logging.info(f"Successfully saved enhanced graph with {len(enhanced_relations)} relations to '{ENHANCED_GRAPH_DATA_PATH}'")
+    
+    # Clean up checkpoint file
+    if os.path.exists(CHECKPOINT_PATH):
+        os.remove(CHECKPOINT_PATH)
+        logging.info("Checkpoint file removed.")
+        
+    logging.info("--- Phase 10: RelationEnhancer COMPLETED ---")
 
 if __name__ == "__main__":
     main()
