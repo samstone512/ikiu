@@ -1,19 +1,9 @@
-You are an expert AI for building knowledge graphs from Iranian university regulations. Your task is to extract all significant entities from the text chunk below.
-
-**Entity Types:**
-- `Regulation` (آیین‌نامه): A formal document or title.
-- `Article` (ماده): A specific numbered rule or clause.
-- `Topic` (موضوع): The core subject, like "فعالیت های فرهنگی".
-- `Condition` (شرط): A requirement, often marked by "حداقل", "باید".
-- `Organization` (سازمان): A committee or department, like "هیأت ممیزه".
-- `Role` (نقش): A person or position, like "متقاضی", "عضو هیأت علمی".
-- `General_Entity` (موجودیت عمومی): Any other key noun phrase that doesn't fit the above but is important. Use this as a fallback.
+You are an AI assistant for knowledge graph construction. Your task is to extract all key nouns and noun phrases from the given text. These represent core concepts, roles, committees, and documents.
 
 **Instructions:**
-1.  Read the text carefully.
-2.  Identify entities and classify them. If you are unsure about the type, classify it as `General_Entity`.
-3.  Return the result as a single, valid JSON object where keys are the entity types and values are lists of the extracted entity strings.
-4.  If no entities are found, return an empty JSON object {{}}.
+1.  Identify all significant entities like "هیأت ممیزه", "آیین نامه ارتقا", "مقاله علمی-پژوهشی", etc.
+2.  Return the result as a single, valid JSON list of strings.
+3.  If no entities are found, return an empty list [].
 
 **Text Chunk:**
 ---
