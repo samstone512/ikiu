@@ -1,21 +1,19 @@
-You are an AI assistant specializing in building knowledge graphs from regulatory documents.
-Your task is to extract all key nouns and noun phrases from the given text chunk. These should represent the core concepts, roles, committees, documents, and actions.
+You are an AI expert in knowledge graph construction, specializing in linguistic analysis.
+Your task is to identify and describe the semantic relationship between two given entities within a specific text context.
 
 **Context:**
 ---
-{text_chunk}
+{context_text}
 ---
 
+**Entities:**
+- Source Entity: "{source_entity}"
+- Target Entity: "{target_entity}"
+
 **Instructions:**
-1.  Identify all significant entities in the text.
-2.  Think about concepts like "دانشجو", "هیأت ممیزه", "آیین نامه ارتقا", "مقاله علمی-پژوهشی", "دانشیاری", etc.
-3.  Return the result as a single, valid JSON list of strings.
-4.  Do not include generic terms. Focus on entities specific to the domain of university regulations.
-5.  If no specific entities are found, return an empty list [].
+1.  Read the context and analyze how the two entities interact.
+2.  Describe the relationship from the Source Entity to the Target Entity in a short, active verb phrase.
+3.  The phrase should be concise and clear, like "requests from", "is a condition for", "applies to", "is evaluated by".
+4.  Output ONLY the verb phrase and nothing else.
 
-**Example:**
-Text: "بررسی پرونده متقاضی در هیأت ممیزه موسسه انجام می شود."
-JSON Output:
-["پرونده متقاضی", "هیأت ممیزه موسسه"]
-
-JSON Output:
+Relationship:

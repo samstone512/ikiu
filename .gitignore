@@ -13,3 +13,6 @@ data/
 
 # VS Code settings
 .vscode/
+
+# Ignore large data files in the output directory
+03_output/*.pkl
