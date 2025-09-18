@@ -1,5 +1,3 @@
-# for checking our output data (graph data and knowledge chunks)
-
 import pickle
 from pathlib import Path
 import sys
