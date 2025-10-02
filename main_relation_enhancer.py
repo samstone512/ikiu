@@ -49,7 +49,7 @@ def find_context_for_edge(source: str, target: str, chunks: List[Dict]) -> str:
         entities_in_chunk = chunk.get("entities", [])
         if not isinstance(entities_in_chunk, list):
             continue
-        
+
         # Check if both source and target are present in this list
         if source in entities_in_chunk and target in entities_in_chunk:
             return chunk.get("text", "")
@@ -70,7 +70,7 @@ def get_relationship(context: str, source: str, target: str, model, prompt_templ
 def main():
     """Main function to enhance the entire graph with semantic relationships."""
     logging.info("--- Starting Phase 10: Relation Enhancer (FINAL RUN) ---")
-    
+
     if not setup_gemini(): return
     graph_data = load_data(GRAPH_DATA_PATH)
     knowledge_chunks = load_data(KNOWLEDGE_CHUNKS_PATH)
@@ -85,7 +85,7 @@ def main():
     logging.info(f"Loaded graph with {len(nodes)} nodes and {len(edges)} edges.")
 
     model = genai.GenerativeModel('gemini-1.5-pro-latest')
-    
+
     enhanced_relations = []
     start_index = 0
     if os.path.exists(CHECKPOINT_PATH):
@@ -95,37 +95,37 @@ def main():
 
     # We need to track which edges have been processed
     processed_edges_count = start_index
-    
+
     with tqdm(total=len(edges), initial=processed_edges_count, desc="Enhancing Relations") as pbar:
         for i in range(processed_edges_count, len(edges)):
             source, target = edges[i]
             context = find_context_for_edge(source, target, knowledge_chunks)
-            
+
             relation_tuple = (source, "CONTEXT_NOT_FOUND", target)
             if context:
                 relationship = get_relationship(context, source, target, model, prompt_template)
                 relation_tuple = (source, relationship, target)
 
             enhanced_relations.append(relation_tuple)
-            
+
             if i % 10 == 0:
                 with open(CHECKPOINT_PATH, 'wb') as f:
                     pickle.dump(enhanced_relations, f)
-            
+
             pbar.update(1)
 
     logging.info("--- Full processing complete ---")
-    
+
     final_graph_data = {"nodes": nodes, "relations": enhanced_relations}
     with open(ENHANCED_GRAPH_DATA_PATH, 'wb') as f:
         pickle.dump(final_graph_data, f)
-    
+
     logging.info(f"Successfully saved enhanced graph with {len(enhanced_relations)} relations to '{ENHANCED_GRAPH_DATA_PATH}'")
-    
+
     if os.path.exists(CHECKPOINT_PATH):
         os.remove(CHECKPOINT_PATH)
         logging.info("Checkpoint file removed.")
-        
+
     logging.info("--- Phase 10: RelationEnhancer COMPLETED ---")
 
 if __name__ == "__main__":
